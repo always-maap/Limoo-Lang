@@ -1,3 +1,4 @@
+#[derive(Debug, PartialEq)]
 pub enum Token {
     ILLEGAL,
     EOF,
@@ -8,7 +9,7 @@ pub enum Token {
 
     // Operators
     ASSIGN, // "="
-    Plus,   // "+"
+    PLUS,   // "+"
 
     // Delimiters
     COMMA,     // ","
