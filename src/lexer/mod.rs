@@ -22,7 +22,7 @@ impl Lexer {
         lexer
     }
 
-    fn next_token(&mut self) -> Token {
+    pub fn next_token(&mut self) -> Token {
         let token: Token;
 
         self.skip_whitespace();
