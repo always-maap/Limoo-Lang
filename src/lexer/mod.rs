@@ -28,12 +28,32 @@ impl Lexer {
         self.skip_whitespace();
 
         match self.ch {
-            '=' => token = Token::ASSIGN,
+            '=' => {
+                if self.peek_char() == '=' {
+                    self.read_char();
+                    token = Token::EQ
+                } else {
+                    token = Token::ASSIGN
+                }
+            }
+            '!' => {
+                if self.peek_char() == '=' {
+                    self.read_char();
+                    token = Token::NOT_EQ
+                } else {
+                    token = Token::BANG
+                }
+            }
             ';' => token = Token::SEMICOLON,
             '(' => token = Token::LPAREN,
             ')' => token = Token::RPAREN,
             ',' => token = Token::COMMA,
             '+' => token = Token::PLUS,
+            '-' => token = Token::MINUS,
+            '/' => token = Token::SLASH,
+            '*' => token = Token::ASTERISK,
+            '<' => token = Token::LT,
+            '>' => token = Token::GT,
             '{' => token = Token::LBRACE,
             '}' => token = Token::RBRACE,
             '\0' => token = Token::EOF,
@@ -43,6 +63,11 @@ impl Lexer {
                     return match idenfifier.as_str() {
                         "let" => Token::LET,
                         "fn" => Token::FUNCTION,
+                        "true" => Token::TRUE,
+                        "false" => Token::FALSE,
+                        "if" => Token::IF,
+                        "else" => Token::ELSE,
+                        "return" => Token::RETURN,
                         _ => Token::IDENT(idenfifier),
                     };
                 } else if ch.is_digit(10) {
@@ -99,6 +124,14 @@ impl Lexer {
     fn skip_whitespace(&mut self) {
         while self.ch.is_whitespace() {
             self.read_char();
+        }
+    }
+
+    fn peek_char(&self) -> char {
+        if self.read_position >= self.input.len() {
+            '\0'
+        } else {
+            self.input[self.read_position]
         }
     }
 }

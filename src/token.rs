@@ -1,3 +1,4 @@
+#[allow(non_camel_case_types)]
 #[derive(Debug, PartialEq)]
 pub enum Token {
     ILLEGAL,
@@ -8,8 +9,16 @@ pub enum Token {
     INT(i32),      // 1343456
 
     // Operators
-    ASSIGN, // "="
-    PLUS,   // "+"
+    ASSIGN,   // "="
+    PLUS,     // "+"
+    MINUS,    // "-"
+    BANG,     // "!"
+    ASTERISK, // "*"
+    SLASH,    // "/"
+    LT,       // "<"
+    GT,       // ">"
+    EQ,       // "=="
+    NOT_EQ,   // "!="
 
     // Delimiters
     COMMA,     // ","
@@ -23,4 +32,9 @@ pub enum Token {
     // Keywords
     FUNCTION, // "FUNCTION"
     LET,      // "LET"
+    TRUE,     // "TRUE"
+    FALSE,    // "FALSE",
+    IF,       // "IF"
+    ELSE,     // "ELSE"
+    RETURN,   // "RETURN"
 }

@@ -27,10 +27,24 @@ fn test_next_token() {
 fn test_next_token_2() {
     let input = "let five = 5; \
                  let ten = 10; \
-                 let add = fn(x, y) { x + y; }; \
-                 let result = add(five, ten);";
+                 let add = fn(x, y) { \
+                    x + y; \
+                 }; \
+                 let result = add(five, ten); \
+                 !-/*5; \
+                 5 < 10 > 5; \
 
-    let mut lexer = Lexer::new(input);
+                 if (5 < 10) { \
+                    return true; \
+                 } else { \
+                    return false; \
+                 } \
+
+                 10 == 10; \
+                 10 != 9;
+                 ";
+
+    let mut lexer = Lexer::new(&input);
 
     let expected = vec![
         Token::LET,
@@ -69,7 +83,35 @@ fn test_next_token_2() {
         Token::IDENT("ten".to_string()),
         Token::RPAREN,
         Token::SEMICOLON,
-        Token::EOF,
+        Token::BANG,
+        Token::MINUS,
+        Token::SLASH,
+        Token::ASTERISK,
+        Token::INT(5),
+        Token::SEMICOLON,
+        Token::INT(5),
+        Token::LT,
+        Token::INT(10),
+        Token::GT,
+        Token::INT(5),
+        Token::SEMICOLON,
+        Token::IF,
+        Token::LPAREN,
+        Token::INT(5),
+        Token::LT,
+        Token::INT(10),
+        Token::RPAREN,
+        Token::LBRACE,
+        Token::RETURN,
+        Token::TRUE,
+        Token::SEMICOLON,
+        Token::RBRACE,
+        Token::ELSE,
+        Token::LBRACE,
+        Token::RETURN,
+        Token::FALSE,
+        Token::SEMICOLON,
+        Token::RBRACE,
     ];
 
     for test in expected.iter() {
