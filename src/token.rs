@@ -1,5 +1,5 @@
 #[allow(non_camel_case_types)]
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Token {
     ILLEGAL,
     EOF,
