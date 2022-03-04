@@ -23,7 +23,6 @@ fn test_runner(test_case: &[(&str, &str)]) {
 fn test_let_statements() {
     let tests = [
         ("let x = 5;", "let x = 5;"),
-        ("let y = true;", "let y = true;"),
         ("let foobar = y;", "let foobar = y;"),
     ];
 
@@ -34,7 +33,6 @@ fn test_let_statements() {
 fn test_return_statements() {
     let tests = [
         ("return 5;", "return 5;"),
-        ("return true;", "return true;"),
         ("return foobar;", "return foobar;"),
     ];
 
@@ -44,6 +42,13 @@ fn test_return_statements() {
 #[test]
 fn test_identifier_expression() {
     let tests = [("foobar;", "foobar")];
+
+    test_runner(&tests);
+}
+
+#[test]
+fn test_integer_expression() {
+    let tests = [("5;", "5")];
 
     test_runner(&tests);
 }

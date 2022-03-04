@@ -1,5 +1,5 @@
 use crate::{
-    ast::{Expression, Statement},
+    ast::{Expression, Literal, Statement},
     lexer::Lexer,
     token::Token,
 };
@@ -44,7 +44,7 @@ impl Parser {
     fn parse_program(&mut self) -> Result<Vec<Statement>, ParserErrors> {
         let mut program = Vec::new();
 
-        while self.current_token_is(&Token::EOF) {
+        while !self.current_token_is(&Token::EOF) {
             match self.parse_statement() {
                 Ok(statement) => program.push(statement),
                 Err(e) => self.errors.push(e),
@@ -109,7 +109,18 @@ impl Parser {
     }
 
     fn parse_expression(&mut self, precedence: Precedence) -> Result<Expression, ParserError> {
-        unimplemented!()
+        let left_expression = match self.current_token {
+            Token::IDENT(ref id) => Ok(Expression::Ident(id.clone())),
+            Token::INT(value) => Ok(Expression::Lit(Literal::Integer(value))),
+            _ => {
+                return Err(ParserError::new(format!(
+                    "no prefix parse function for {:?}",
+                    self.current_token
+                )))
+            }
+        };
+
+        left_expression
     }
 
     fn error_no_identifier(&self, token: &Token) -> ParserError {
