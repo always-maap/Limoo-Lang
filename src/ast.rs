@@ -1,5 +1,7 @@
 use std::fmt;
 
+use crate::token::Token;
+
 #[derive(Debug)]
 pub enum Node {
     Program(Vec<Statement>),
@@ -38,6 +40,7 @@ impl fmt::Display for Statement {
 pub enum Expression {
     Ident(String),
     Lit(Literal),
+    Prefix(Token, Box<Expression>),
 }
 
 impl fmt::Display for Expression {
@@ -45,6 +48,7 @@ impl fmt::Display for Expression {
         match self {
             Expression::Ident(id) => write!(f, "{}", id),
             Expression::Lit(lit) => write!(f, "{}", lit),
+            Expression::Prefix(prefix, expr) => write!(f, "({}{})", prefix, expr),
         }
     }
 }

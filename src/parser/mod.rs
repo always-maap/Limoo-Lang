@@ -112,6 +112,7 @@ impl Parser {
         let left_expression = match self.current_token {
             Token::IDENT(ref id) => Ok(Expression::Ident(id.clone())),
             Token::INT(value) => Ok(Expression::Lit(Literal::Integer(value))),
+            Token::BANG | Token::MINUS => self.parse_prefix_expression(),
             _ => {
                 return Err(ParserError::new(format!(
                     "no prefix parse function for {:?}",
@@ -121,6 +122,15 @@ impl Parser {
         };
 
         left_expression
+    }
+
+    fn parse_prefix_expression(&mut self) -> Result<Expression, ParserError> {
+        let operator = self.current_token.clone();
+        self.next_token();
+
+        let right_expression = self.parse_expression(Precedence::PREFIX)?;
+
+        Ok(Expression::Prefix(operator, Box::new(right_expression)))
     }
 
     fn error_no_identifier(&self, token: &Token) -> ParserError {
