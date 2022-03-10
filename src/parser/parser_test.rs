@@ -14,7 +14,13 @@ fn test_runner(test_case: &[(&str, &str)]) {
     for (input, expected) in test_case {
         match parse(input) {
             Ok(node) => assert_eq!(expected, &format!("{}", node)),
-            Err(e) => panic!("Parsing Error: {:#?}", e),
+            Err(e) => {
+                println!(
+                    "for input: {} the expected was: {}, which didn't passed!",
+                    input, expected
+                );
+                panic!("Parsing Error: {:#?}", e)
+            }
         }
     }
 }
@@ -80,6 +86,29 @@ fn test_parse_infix_expression() {
         ("5 < 5;", "(5 < 5)"),
         ("5 == 5;", "(5 == 5)"),
         ("5 != 5;", "(5 != 5)"),
+    ];
+
+    test_runner(&tests);
+}
+
+#[test]
+fn test_operator_precedence() {
+    let tests = [
+        ("-a * b", "((-a) * b)"),
+        ("!-a", "(!(-a))"),
+        ("a + b + c", "((a + b) + c)"),
+        ("a + b - c", "((a + b) - c)"),
+        ("a * b * c", "((a * b) * c)"),
+        ("a * b / c", "((a * b) / c)"),
+        ("a + b / c", "(a + (b / c))"),
+        ("a + b * c + d / e - f", "(((a + (b * c)) + (d / e)) - f)"),
+        ("3 + 4; -5 * 5", "(3 + 4)((-5) * 5)"),
+        ("5 > 4 == 3 < 4", "((5 > 4) == (3 < 4))"),
+        ("5 < 4 != 3 > 4", "((5 < 4) != (3 > 4))"),
+        (
+            "3 + 4 * 5 == 3 * 1 + 4 * 5",
+            "((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))",
+        ),
     ];
 
     test_runner(&tests);

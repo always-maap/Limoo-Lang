@@ -103,7 +103,9 @@ impl Parser {
     fn parse_expression_statement(&mut self) -> Result<Statement, ParserError> {
         let expression = self.parse_expression(Precedence::LOWEST)?;
 
-        self.expect_peek(&Token::SEMICOLON)?;
+        if self.peek_token_is(&Token::SEMICOLON) {
+            self.next_token();
+        }
 
         Ok(Statement::Expr(expression))
     }
@@ -113,6 +115,12 @@ impl Parser {
             Token::IDENT(ref id) => Ok(Expression::Ident(id.clone())),
             Token::INT(value) => Ok(Expression::Lit(Literal::Integer(value))),
             Token::BANG | Token::MINUS => self.parse_prefix_expression(),
+            Token::LPAREN => {
+                self.next_token();
+                let expr = self.parse_expression(Precedence::LOWEST);
+                self.expect_peek(&Token::RPAREN)?;
+                expr
+            }
             _ => {
                 return Err(ParserError::new(format!(
                     "no prefix parse function for {:?}",
