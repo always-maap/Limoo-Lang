@@ -6,7 +6,7 @@ use crate::{
 
 use self::{
     error::{ParserError, ParserErrors},
-    precedence::Precedence,
+    precedence::{token_to_precedence, Precedence},
 };
 
 mod error;
@@ -109,7 +109,7 @@ impl Parser {
     }
 
     fn parse_expression(&mut self, precedence: Precedence) -> Result<Expression, ParserError> {
-        let left_expression = match self.current_token {
+        let mut left_expression = match self.current_token {
             Token::IDENT(ref id) => Ok(Expression::Ident(id.clone())),
             Token::INT(value) => Ok(Expression::Lit(Literal::Integer(value))),
             Token::BANG | Token::MINUS => self.parse_prefix_expression(),
@@ -121,6 +121,26 @@ impl Parser {
             }
         };
 
+        while !self.peek_token_is(&Token::SEMICOLON)
+            && precedence < token_to_precedence(&self.peek_token)
+        {
+            match self.peek_token {
+                Token::GT
+                | Token::LT
+                | Token::EQ
+                | Token::NOT_EQ
+                | Token::PLUS
+                | Token::MINUS
+                | Token::ASTERISK
+                | Token::SLASH => {
+                    self.next_token();
+                    let expression = left_expression.unwrap();
+                    left_expression = self.parse_infix_expression(expression)
+                }
+                _ => return left_expression,
+            }
+        }
+
         left_expression
     }
 
@@ -131,6 +151,24 @@ impl Parser {
         let right_expression = self.parse_expression(Precedence::PREFIX)?;
 
         Ok(Expression::Prefix(operator, Box::new(right_expression)))
+    }
+
+    fn parse_infix_expression(
+        &mut self,
+        left_expression: Expression,
+    ) -> Result<Expression, ParserError> {
+        let infix_operator = self.current_token.clone();
+
+        let precedence = token_to_precedence(&infix_operator);
+        self.next_token();
+
+        let right_expression = self.parse_expression(precedence)?;
+
+        Ok(Expression::Infix(
+            Box::new(left_expression),
+            infix_operator,
+            Box::new(right_expression),
+        ))
     }
 
     fn error_no_identifier(&self, token: &Token) -> ParserError {

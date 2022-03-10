@@ -68,3 +68,19 @@ fn test_parse_prefix_expression() {
 
     test_runner(&tests);
 }
+
+#[test]
+fn test_parse_infix_expression() {
+    let tests = [
+        ("5 + 5;", "(5 + 5)"),
+        ("5 - 5;", "(5 - 5)"),
+        ("5 * 5;", "(5 * 5)"),
+        ("5 / 5;", "(5 / 5)"),
+        ("5 > 5;", "(5 > 5)"),
+        ("5 < 5;", "(5 < 5)"),
+        ("5 == 5;", "(5 == 5)"),
+        ("5 != 5;", "(5 != 5)"),
+    ];
+
+    test_runner(&tests);
+}
