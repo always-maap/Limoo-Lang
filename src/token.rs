@@ -9,6 +9,7 @@ pub enum Token {
     // Identifiers + literals
     IDENT(String), // add, foobar, x, y, ...
     INT(i32),      // 1343456
+    BOOLEAN(bool), // true, false
 
     // Operators
     ASSIGN,   // "="
@@ -34,8 +35,6 @@ pub enum Token {
     // Keywords
     FUNCTION, // "FUNCTION"
     LET,      // "LET"
-    TRUE,     // "TRUE"
-    FALSE,    // "FALSE",
     IF,       // "IF"
     ELSE,     // "ELSE"
     RETURN,   // "RETURN"
@@ -46,6 +45,7 @@ impl fmt::Display for Token {
         match self {
             Token::IDENT(id) => write!(f, "{}", id),
             Token::INT(i) => write!(f, "{}", i),
+            Token::BOOLEAN(b) => write!(f, "{}", b),
             Token::ASSIGN => write!(f, "="),
             Token::PLUS => write!(f, "+"),
             Token::MINUS => write!(f, "-"),

@@ -63,8 +63,8 @@ impl Lexer {
                     return match idenfifier.as_str() {
                         "let" => Token::LET,
                         "fn" => Token::FUNCTION,
-                        "true" => Token::TRUE,
-                        "false" => Token::FALSE,
+                        "true" => Token::BOOLEAN(true),
+                        "false" => Token::BOOLEAN(false),
                         "if" => Token::IF,
                         "else" => Token::ELSE,
                         "return" => Token::RETURN,

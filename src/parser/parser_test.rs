@@ -29,7 +29,7 @@ fn test_runner(test_case: &[(&str, &str)]) {
 fn test_let_statements() {
     let tests = [
         ("let x = 5;", "let x = 5;"),
-        //("let y = true;", "let y = true;"),
+        ("let y = true;", "let y = true;"),
         ("let foobar = y;", "let foobar = y;"),
     ];
 
@@ -40,7 +40,7 @@ fn test_let_statements() {
 fn test_return_statements() {
     let tests = [
         ("return 5;", "return 5;"),
-        //("return true;", "return true;"),
+        ("return true;", "return true;"),
         ("return foobar;", "return foobar;"),
     ];
 
@@ -68,8 +68,8 @@ fn test_parse_prefix_expression() {
         ("-15;", "(-15)"),
         ("!foobar;", "(!foobar)"),
         ("-foobar;", "(-foobar)"),
-        //("!true;", "(!true)"),
-        //("!false;", "(!false)"),
+        ("!true;", "(!true)"),
+        ("!false;", "(!false)"),
     ];
 
     test_runner(&tests);

@@ -114,6 +114,7 @@ impl Parser {
         let mut left_expression = match self.current_token {
             Token::IDENT(ref id) => Ok(Expression::Ident(id.clone())),
             Token::INT(value) => Ok(Expression::Lit(Literal::Integer(value))),
+            Token::BOOLEAN(boolean) => Ok(Expression::Lit(Literal::Boolean(boolean))),
             Token::BANG | Token::MINUS => self.parse_prefix_expression(),
             Token::LPAREN => {
                 self.next_token();
