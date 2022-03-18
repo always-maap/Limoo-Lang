@@ -1,5 +1,5 @@
 use crate::{
-    ast::{Expression, Literal, Statement},
+    ast::{BlockStatement, Expression, Literal, Statement},
     lexer::Lexer,
     token::Token,
 };
@@ -116,12 +116,8 @@ impl Parser {
             Token::INT(value) => Ok(Expression::Lit(Literal::Integer(value))),
             Token::BOOLEAN(boolean) => Ok(Expression::Lit(Literal::Boolean(boolean))),
             Token::BANG | Token::MINUS => self.parse_prefix_expression(),
-            Token::LPAREN => {
-                self.next_token();
-                let expr = self.parse_expression(Precedence::LOWEST);
-                self.expect_peek(&Token::RPAREN)?;
-                expr
-            }
+            Token::LPAREN => self.parse_group_expression(),
+            Token::IF => self.parse_if_expression(),
             _ => {
                 return Err(ParserError::new(format!(
                     "no prefix parse function for {:?}",
@@ -178,6 +174,54 @@ impl Parser {
             infix_operator,
             Box::new(right_expression),
         ))
+    }
+
+    fn parse_group_expression(&mut self) -> Result<Expression, ParserError> {
+        self.next_token();
+        let expression = self.parse_expression(Precedence::LOWEST)?;
+        self.expect_peek(&Token::RPAREN)?;
+        Ok(expression)
+    }
+
+    fn parse_if_expression(&mut self) -> Result<Expression, ParserError> {
+        self.expect_peek(&Token::LPAREN)?;
+        self.next_token();
+
+        let condition = self.parse_expression(Precedence::LOWEST)?;
+
+        self.expect_peek(&Token::RPAREN)?;
+        self.expect_peek(&Token::LBRACE)?;
+
+        let consequence = self.parse_block_statement()?;
+
+        let alternative = if self.peek_token_is(&Token::ELSE) {
+            self.next_token();
+            self.expect_peek(&Token::LBRACE)?;
+            Some(self.parse_block_statement()?)
+        } else {
+            None
+        };
+
+        Ok(Expression::If(
+            Box::new(condition),
+            consequence,
+            alternative,
+        ))
+    }
+
+    fn parse_block_statement(&mut self) -> Result<BlockStatement, ParserError> {
+        self.next_token();
+
+        let mut statements = Vec::new();
+
+        while !self.current_token_is(&Token::RBRACE) && !self.current_token_is(&Token::EOF) {
+            if let Ok(statement) = self.parse_statement() {
+                statements.push(statement);
+            }
+            self.next_token();
+        }
+
+        Ok(statements)
     }
 
     fn error_no_identifier(&self, token: &Token) -> ParserError {

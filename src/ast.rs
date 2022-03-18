@@ -36,12 +36,15 @@ impl fmt::Display for Statement {
     }
 }
 
+pub type BlockStatement = Vec<Statement>;
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum Expression {
     Ident(String),
     Lit(Literal),
     Prefix(Token, Box<Expression>),
     Infix(Box<Expression>, Token, Box<Expression>),
+    If(Box<Expression>, BlockStatement, Option<BlockStatement>),
 }
 
 impl fmt::Display for Expression {
@@ -52,6 +55,25 @@ impl fmt::Display for Expression {
             Expression::Prefix(prefix, expr) => write!(f, "({}{})", prefix, expr),
             Expression::Infix(left_expression, operator, right_expression) => {
                 write!(f, "({} {} {})", left_expression, operator, right_expression)
+            }
+            Expression::If(condition, then_block, else_block) => {
+                println!("{:?} {:?} {:?}", condition, then_block, else_block);
+                if let Some(else_block) = else_block {
+                    write!(
+                        f,
+                        "if {} {{ {} }} else {{ {} }}",
+                        condition,
+                        format_statements(then_block),
+                        format_statements(else_block)
+                    )
+                } else {
+                    write!(
+                        f,
+                        "if {} {{ {} }}",
+                        condition,
+                        format_statements(then_block)
+                    )
+                }
             }
         }
     }

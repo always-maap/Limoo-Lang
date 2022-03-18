@@ -109,7 +109,29 @@ fn test_operator_precedence() {
             "3 + 4 * 5 == 3 * 1 + 4 * 5",
             "((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))",
         ),
+        ("true", "true"),
+        ("false", "false"),
+        ("3 > 5 == false", "((3 > 5) == false)"),
+        ("3 < 5 == true", "((3 < 5) == true)"),
+        ("1 + (2 + 3) + 4", "((1 + (2 + 3)) + 4)"),
+        ("(5 + 5) * 2", "((5 + 5) * 2)"),
+        ("2 / (5 + 5)", "(2 / (5 + 5))"),
+        ("(5 + 5) * 2 * (5 + 5)", "(((5 + 5) * 2) * (5 + 5))"),
+        ("-(5 + 5)", "(-(5 + 5))"),
+        ("!(true == true)", "(!(true == true))"),
     ];
 
     test_runner(&tests);
+}
+
+#[test]
+fn test_if_expression() {
+    let test_case = [("if (x < y) { x }", "if (x < y) { x }")];
+    test_runner(&test_case);
+}
+
+#[test]
+fn test_if_else_expression() {
+    let test_case = [("if (x < y) { x } else { y }", "if (x < y) { x } else { y }")];
+    test_runner(&test_case);
 }
