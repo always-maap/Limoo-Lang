@@ -118,6 +118,7 @@ impl Parser {
             Token::BANG | Token::MINUS => self.parse_prefix_expression(),
             Token::LPAREN => self.parse_group_expression(),
             Token::IF => self.parse_if_expression(),
+            Token::FUNCTION => self.parse_fn_expressions(),
             _ => {
                 return Err(ParserError::new(format!(
                     "no prefix parse function for {:?}",
@@ -222,6 +223,48 @@ impl Parser {
         }
 
         Ok(statements)
+    }
+
+    fn parse_fn_expressions(&mut self) -> Result<Expression, ParserError> {
+        self.expect_peek(&Token::LPAREN)?;
+
+        let parameters = self.parse_fn_parameters()?;
+
+        self.expect_peek(&Token::LBRACE)?;
+
+        let body = self.parse_block_statement()?;
+
+        Ok(Expression::FUNCTION(parameters, body))
+    }
+
+    fn parse_fn_parameters(&mut self) -> Result<Vec<String>, ParserError> {
+        let mut parameters = Vec::new();
+
+        if self.peek_token_is(&Token::RPAREN) {
+            self.next_token();
+            return Ok(parameters);
+        }
+
+        self.next_token();
+
+        match &self.current_token {
+            Token::IDENT(ref id) => parameters.push(id.clone()),
+            token => return Err(self.error_no_identifier(token)),
+        }
+
+        while self.peek_token_is(&Token::COMMA) {
+            self.next_token();
+            self.next_token();
+
+            match &self.current_token {
+                Token::IDENT(ref id) => parameters.push(id.clone()),
+                token => return Err(self.error_no_identifier(token)),
+            }
+        }
+
+        self.expect_peek(&Token::RPAREN)?;
+
+        Ok(parameters)
     }
 
     fn error_no_identifier(&self, token: &Token) -> ParserError {

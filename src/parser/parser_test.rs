@@ -135,3 +135,13 @@ fn test_if_else_expression() {
     let test_case = [("if (x < y) { x } else { y }", "if (x < y) { x } else { y }")];
     test_runner(&test_case);
 }
+
+#[test]
+fn test_function_expression() {
+    let test_case = [
+        ("fn() {};", "fn() {...}"),
+        ("fn(x) {};", "fn(x) {...}"),
+        ("fn(x, y, z) {};", "fn(x, y, z) {...}"),
+    ];
+    test_runner(&test_case);
+}
