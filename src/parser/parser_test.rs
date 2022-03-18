@@ -145,3 +145,9 @@ fn test_function_expression() {
     ];
     test_runner(&test_case);
 }
+
+#[test]
+fn test_fn_call_expression() {
+    let test_case = [("add(1, 2 * 3, 4 + 5);", "add(1, (2 * 3), (4 + 5))")];
+    test_runner(&test_case);
+}

@@ -143,6 +143,11 @@ impl Parser {
                     let expression = left_expression.unwrap();
                     left_expression = self.parse_infix_expression(expression)
                 }
+                Token::LPAREN => {
+                    self.next_token();
+                    let expression = left_expression.unwrap();
+                    left_expression = self.parse_call_expression(expression)
+                }
                 _ => return left_expression,
             }
         }
@@ -234,7 +239,7 @@ impl Parser {
 
         let body = self.parse_block_statement()?;
 
-        Ok(Expression::FUNCTION(parameters, body))
+        Ok(Expression::Function(parameters, body))
     }
 
     fn parse_fn_parameters(&mut self) -> Result<Vec<String>, ParserError> {
@@ -265,6 +270,35 @@ impl Parser {
         self.expect_peek(&Token::RPAREN)?;
 
         Ok(parameters)
+    }
+
+    fn parse_call_expression(&mut self, function: Expression) -> Result<Expression, ParserError> {
+        let arguments = self.parse_call_arguments()?;
+
+        Ok(Expression::FunctionCall(Box::new(function), arguments))
+    }
+
+    fn parse_call_arguments(&mut self) -> Result<Vec<Expression>, ParserError> {
+        let mut arguments = Vec::new();
+
+        self.next_token();
+
+        if self.current_token_is(&Token::RPAREN) {
+            return Ok(arguments);
+        }
+
+        arguments.push(self.parse_expression(Precedence::LOWEST)?);
+
+        while self.peek_token_is(&Token::COMMA) {
+            self.next_token();
+            self.next_token();
+
+            arguments.push(self.parse_expression(Precedence::LOWEST)?);
+        }
+
+        self.expect_peek(&Token::RPAREN)?;
+
+        Ok(arguments)
     }
 
     fn error_no_identifier(&self, token: &Token) -> ParserError {
