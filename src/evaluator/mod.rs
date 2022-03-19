@@ -49,6 +49,7 @@ fn eval_expression(expression: &Expression) -> EvaluatorResult {
 fn eval_literal(literal: &Literal) -> EvaluatorResult {
     match literal {
         Literal::Integer(i) => Ok(Rc::new(Object::Integer(*i))),
+        Literal::Boolean(b) => Ok(Rc::new(Object::Boolean(*b))),
         _ => unimplemented!(),
     }
 }
