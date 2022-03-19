@@ -11,7 +11,7 @@ use self::{
 
 mod error;
 #[cfg(test)]
-mod parser_test;
+pub mod parser_test;
 mod precedence;
 
 #[derive(Debug)]
@@ -41,7 +41,7 @@ impl Parser {
         self.peek_token = self.lexer.next_token();
     }
 
-    fn parse_program(&mut self) -> Result<Vec<Statement>, ParserErrors> {
+    pub fn parse_program(&mut self) -> Result<Vec<Statement>, ParserErrors> {
         let mut program = Vec::new();
 
         while !self.current_token_is(&Token::EOF) {
