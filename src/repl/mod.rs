@@ -1,6 +1,6 @@
 use std::io::{self, Write};
 
-use crate::parser::parser_test::parse;
+use crate::{evaluator::eval, parser::parser_test::parse};
 
 const PROMPT: &str = ">> ";
 
@@ -17,6 +17,16 @@ pub fn start() {
             .read_line(&mut input)
             .expect("Failed to read line");
 
-        println!("{}", parse(&input).unwrap());
+        match parse(&input) {
+            Ok(node) => match eval(node) {
+                Ok(value) => println!("{}", value),
+                Err(err) => eprintln!("{}", err),
+            },
+            Err(errors) => {
+                for error in errors {
+                    eprintln!("{}", error);
+                }
+            }
+        }
     }
 }
