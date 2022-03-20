@@ -111,25 +111,14 @@ fn eval_bang_operator(expression: &Rc<Object>) -> EvaluatorResult {
 fn eval_minus_operator(expression: &Rc<Object>) -> EvaluatorResult {
     match **expression {
         Object::Integer(i) => Ok(Rc::new(Object::Integer(-i))),
-        _ => Err(EvaluatorError::new(format!(
-            "Unknown operator: -{}",
-            expression
-        ))),
+        _ => Err(EvaluatorError::new(format!("Unknown operator: -{}", expression))),
     }
 }
 
-fn eval_infix_expression(
-    left: &Rc<Object>,
-    operator: &Token,
-    right: &Rc<Object>,
-) -> EvaluatorResult {
+fn eval_infix_expression(left: &Rc<Object>, operator: &Token, right: &Rc<Object>) -> EvaluatorResult {
     match (&**left, &**right) {
-        (Object::Integer(left), Object::Integer(right)) => {
-            eval_integer_infix_expression(*left, operator, *right)
-        }
-        (Object::Boolean(left), Object::Boolean(right)) => {
-            eval_boolean_infix_expression(*left, operator, *right)
-        }
+        (Object::Integer(left), Object::Integer(right)) => eval_integer_infix_expression(*left, operator, *right),
+        (Object::Boolean(left), Object::Boolean(right)) => eval_boolean_infix_expression(*left, operator, *right),
         _ => Err(EvaluatorError::new(format!(
             "Mismatch type: {} {} {}",
             left, operator, right

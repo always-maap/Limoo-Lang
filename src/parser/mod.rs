@@ -126,9 +126,7 @@ impl Parser {
             }
         };
 
-        while !self.peek_token_is(&Token::SEMICOLON)
-            && precedence < token_to_precedence(&self.peek_token)
-        {
+        while !self.peek_token_is(&Token::SEMICOLON) && precedence < token_to_precedence(&self.peek_token) {
             match self.peek_token {
                 Token::GT
                 | Token::LT
@@ -163,10 +161,7 @@ impl Parser {
         Ok(Expression::Prefix(operator, Box::new(right_expression)))
     }
 
-    fn parse_infix_expression(
-        &mut self,
-        left_expression: Expression,
-    ) -> Result<Expression, ParserError> {
+    fn parse_infix_expression(&mut self, left_expression: Expression) -> Result<Expression, ParserError> {
         let infix_operator = self.current_token.clone();
 
         let precedence = token_to_precedence(&infix_operator);
@@ -207,11 +202,7 @@ impl Parser {
             None
         };
 
-        Ok(Expression::If(
-            Box::new(condition),
-            consequence,
-            alternative,
-        ))
+        Ok(Expression::If(Box::new(condition), consequence, alternative))
     }
 
     fn parse_block_statement(&mut self) -> Result<BlockStatement, ParserError> {
@@ -301,10 +292,7 @@ impl Parser {
     }
 
     fn error_no_identifier(&self, token: &Token) -> ParserError {
-        ParserError::new(format!(
-            "Expected an identifier but got {:?}",
-            token.clone()
-        ))
+        ParserError::new(format!("Expected an identifier but got {:?}", token.clone()))
     }
 
     fn current_token_is(&self, token: &Token) -> bool {

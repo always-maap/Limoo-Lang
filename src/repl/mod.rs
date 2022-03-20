@@ -13,9 +13,7 @@ pub fn start() {
 
         let mut input = String::new();
 
-        io::stdin()
-            .read_line(&mut input)
-            .expect("Failed to read line");
+        io::stdin().read_line(&mut input).expect("Failed to read line");
 
         match parse(&input) {
             Ok(node) => match eval(node) {

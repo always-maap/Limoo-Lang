@@ -69,12 +69,7 @@ impl fmt::Display for Expression {
                         format_statements(else_block)
                     )
                 } else {
-                    write!(
-                        f,
-                        "if {} {{ {} }}",
-                        condition,
-                        format_statements(then_block)
-                    )
+                    write!(f, "if {} {{ {} }}", condition, format_statements(then_block))
                 }
             }
             Expression::Function(params, _block) => {
