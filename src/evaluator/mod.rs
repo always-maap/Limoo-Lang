@@ -14,7 +14,6 @@ mod evaluator_test;
 pub type EvaluatorResult = Result<Rc<Object>, EvaluatorError>;
 
 pub fn eval(node: Node) -> EvaluatorResult {
-    //println!("{:#?}", node);
     match node {
         Node::Program(program) => eval_program(&program),
         Node::Expr(expression) => eval_expression(&expression),
@@ -47,6 +46,11 @@ fn eval_expression(expression: &Expression) -> EvaluatorResult {
         Expression::Prefix(operator, expression) => {
             let right = eval_expression(expression)?;
             eval_prefix_expression(operator, &right)
+        }
+        Expression::Infix(left, operator, right) => {
+            let left = eval_expression(left)?;
+            let right = eval_expression(right)?;
+            eval_infix_expression(&left, operator, &right)
         }
         _ => unimplemented!(),
     }
@@ -84,4 +88,59 @@ fn eval_minus_operator(expression: &Rc<Object>) -> EvaluatorResult {
             expression
         ))),
     }
+}
+
+fn eval_infix_expression(
+    left: &Rc<Object>,
+    operator: &Token,
+    right: &Rc<Object>,
+) -> EvaluatorResult {
+    match (&**left, &**right) {
+        (Object::Integer(left), Object::Integer(right)) => {
+            eval_integer_infix_expression(*left, operator, *right)
+        }
+        (Object::Boolean(left), Object::Boolean(right)) => {
+            eval_boolean_infix_expression(*left, operator, *right)
+        }
+        _ => Err(EvaluatorError::new(format!(
+            "Mismatch type: {} {} {}",
+            left, operator, right
+        ))),
+    }
+}
+
+fn eval_integer_infix_expression(left: i32, operator: &Token, right: i32) -> EvaluatorResult {
+    let result = match operator {
+        Token::PLUS => Object::Integer(left + right),
+        Token::MINUS => Object::Integer(left - right),
+        Token::ASTERISK => Object::Integer(left * right),
+        Token::SLASH => Object::Integer(left / right),
+        Token::EQ => Object::Boolean(left == right),
+        Token::NOT_EQ => Object::Boolean(left != right),
+        Token::LT => Object::Boolean(left < right),
+        Token::GT => Object::Boolean(left > right),
+        _ => {
+            return Err(EvaluatorError::new(format!(
+                "Unknown operator: {} {} {}",
+                left, operator, right
+            )))
+        }
+    };
+
+    Ok(Rc::new(result))
+}
+
+fn eval_boolean_infix_expression(left: bool, operator: &Token, right: bool) -> EvaluatorResult {
+    let result = match operator {
+        Token::EQ => Object::Boolean(left == right),
+        Token::NOT_EQ => Object::Boolean(left != right),
+        _ => {
+            return Err(EvaluatorError::new(format!(
+                "Unknown operator: {} {} {}",
+                left, operator, right
+            )))
+        }
+    };
+
+    Ok(Rc::new(result))
 }
