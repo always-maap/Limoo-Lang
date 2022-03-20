@@ -13,6 +13,14 @@ mod evaluator_test;
 
 pub type EvaluatorResult = Result<Rc<Object>, EvaluatorError>;
 
+fn is_truthy(obj: &Object) -> bool {
+    match *obj {
+        Object::Null => false,
+        Object::Boolean(false) => false,
+        _ => true,
+    }
+}
+
 pub fn eval(node: Node) -> EvaluatorResult {
     match node {
         Node::Program(program) => eval_program(&program),
@@ -51,6 +59,18 @@ fn eval_expression(expression: &Expression) -> EvaluatorResult {
             let left = eval_expression(left)?;
             let right = eval_expression(right)?;
             eval_infix_expression(&left, operator, &right)
+        }
+        Expression::If(condition, consequence, alternative) => {
+            let condition = eval_expression(condition)?;
+
+            if is_truthy(&condition) {
+                eval_block_statement(consequence)
+            } else {
+                match alternative {
+                    Some(alternative) => eval_block_statement(alternative),
+                    None => Ok(Rc::new(Object::Null)),
+                }
+            }
         }
         _ => unimplemented!(),
     }
@@ -143,4 +163,16 @@ fn eval_boolean_infix_expression(left: bool, operator: &Token, right: bool) -> E
     };
 
     Ok(Rc::new(result))
+}
+
+fn eval_block_statement(statements: &[Statement]) -> EvaluatorResult {
+    let result = Rc::new(Object::Null);
+
+    for statement in statements {
+        let val = eval_statement(statement)?;
+
+        return Ok(val);
+    }
+
+    Ok(result)
 }

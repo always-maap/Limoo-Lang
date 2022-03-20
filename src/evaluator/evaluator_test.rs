@@ -83,4 +83,18 @@ mod evaluator_test {
         ];
         test_runner(&tests);
     }
+
+    #[test]
+    fn test_if_else_expressions() {
+        let test_case = [
+            ("if (true) { 10 }", "10"),
+            ("if (false) { 10 }", "null"),
+            ("if (1) { 10 }", "10"),
+            ("if (1 < 2) { 10 }", "10"),
+            ("if (1 > 2) { 10 }", "null"),
+            ("if (1 > 2) { 10 } else { 20 }", "20"),
+            ("if (1 < 2) { 10 } else { 20 }", "10"),
+        ];
+        test_runner(&test_case);
+    }
 }
