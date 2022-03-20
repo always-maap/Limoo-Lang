@@ -24,18 +24,21 @@ fn is_truthy(obj: &Object) -> bool {
 pub fn eval(node: Node) -> EvaluatorResult {
     match node {
         Node::Program(program) => eval_program(&program),
+        Node::Stmt(statement) => eval_statement(&statement),
         Node::Expr(expression) => eval_expression(&expression),
-        _ => unimplemented!(),
     }
 }
 
 fn eval_program(program: &[Statement]) -> EvaluatorResult {
-    let result = Rc::new(Object::Null);
+    let mut result = Rc::new(Object::Null);
 
     for statement in program {
         let val = eval_statement(statement)?;
 
-        return Ok(val);
+        match *val {
+            Object::ReturnValue(_) => return Ok(val),
+            _ => result = val,
+        }
     }
 
     Ok(result)
@@ -44,6 +47,11 @@ fn eval_program(program: &[Statement]) -> EvaluatorResult {
 fn eval_statement(statement: &Statement) -> EvaluatorResult {
     match statement {
         Statement::Expr(expression) => eval_expression(expression),
+        Statement::Return(expression) => {
+            let val = eval_expression(expression)?;
+
+            return Ok(Rc::new(Object::ReturnValue(val)));
+        }
         _ => unimplemented!(),
     }
 }
@@ -166,12 +174,15 @@ fn eval_boolean_infix_expression(left: bool, operator: &Token, right: bool) -> E
 }
 
 fn eval_block_statement(statements: &[Statement]) -> EvaluatorResult {
-    let result = Rc::new(Object::Null);
+    let mut result = Rc::new(Object::Null);
 
     for statement in statements {
         let val = eval_statement(statement)?;
 
-        return Ok(val);
+        match *val {
+            Object::ReturnValue(_) => return Ok(val),
+            _ => result = val,
+        }
     }
 
     Ok(result)

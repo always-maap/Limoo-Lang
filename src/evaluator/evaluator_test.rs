@@ -97,4 +97,25 @@ mod evaluator_test {
         ];
         test_runner(&test_case);
     }
+
+    #[test]
+    fn test_return_statements() {
+        let tests = [
+            ("return 10;", "10"),
+            ("return 10; 9;", "10"),
+            ("return 2 * 5; 9;", "10"),
+            ("9; return 2 * 5; 9;", "10"),
+            ("if (10 > 1) { return 10; }", "10"),
+            (
+                "if (10 > 1) { \
+                  if (10 > 1) { \
+                   return 10; \
+                  } \
+                  return 1; \
+                }",
+                "10",
+            ),
+        ];
+        test_runner(&tests);
+    }
 }
