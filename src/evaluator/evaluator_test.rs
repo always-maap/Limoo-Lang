@@ -26,13 +26,25 @@ mod evaluator_test {
 
     #[test]
     fn test_integer_expression() {
-        let tests = [("5", "5"), ("10", "10")];
+        let tests = [("5", "5"), ("10", "10"), ("-5", "-5"), ("-10", "-10")];
         test_runner(&tests);
     }
 
     #[test]
     fn test_boolean_expression() {
         let tests = [("true", "true"), ("false", "false")];
+        test_runner(&tests);
+    }
+
+    #[test]
+    fn test_bang_operator() {
+        let tests = [
+            ("!true", "false"),
+            ("!false", "true"),
+            ("!5", "false"),
+            ("!!true", "true"),
+            ("!!5", "true"),
+        ];
         test_runner(&tests);
     }
 }
