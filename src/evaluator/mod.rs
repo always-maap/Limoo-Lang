@@ -6,8 +6,9 @@ use crate::{
     token::Token,
 };
 
-use self::error::EvaluatorError;
+use self::{environment::Env, error::EvaluatorError};
 
+pub mod environment;
 mod error;
 mod evaluator_test;
 
@@ -21,19 +22,19 @@ fn is_truthy(obj: &Object) -> bool {
     }
 }
 
-pub fn eval(node: Node) -> EvaluatorResult {
+pub fn eval(node: Node, env: &Env) -> EvaluatorResult {
     match node {
-        Node::Program(program) => eval_program(&program),
-        Node::Stmt(statement) => eval_statement(&statement),
-        Node::Expr(expression) => eval_expression(&expression),
+        Node::Program(program) => eval_program(&program, env),
+        Node::Stmt(statement) => eval_statement(&statement, env),
+        Node::Expr(expression) => eval_expression(&expression, env),
     }
 }
 
-fn eval_program(program: &[Statement]) -> EvaluatorResult {
+fn eval_program(program: &[Statement], env: &Env) -> EvaluatorResult {
     let mut result = Rc::new(Object::Null);
 
     for statement in program {
-        let val = eval_statement(statement)?;
+        let val = eval_statement(statement, &Rc::clone(env))?;
 
         match *val {
             Object::ReturnValue(_) => return Ok(val),
@@ -44,42 +45,48 @@ fn eval_program(program: &[Statement]) -> EvaluatorResult {
     Ok(result)
 }
 
-fn eval_statement(statement: &Statement) -> EvaluatorResult {
+fn eval_statement(statement: &Statement, env: &Env) -> EvaluatorResult {
     match statement {
-        Statement::Expr(expression) => eval_expression(expression),
+        Statement::Let(identifier, expression) => {
+            let value = eval_expression(expression, &Rc::clone(env))?;
+            let object = Rc::clone(&value);
+            env.borrow_mut().set(identifier.clone(), object);
+            Ok(value)
+        }
+        Statement::Expr(expression) => eval_expression(expression, env),
         Statement::Return(expression) => {
-            let val = eval_expression(expression)?;
+            let val = eval_expression(expression, env)?;
 
             return Ok(Rc::new(Object::ReturnValue(val)));
         }
-        _ => unimplemented!(),
     }
 }
 
-fn eval_expression(expression: &Expression) -> EvaluatorResult {
+fn eval_expression(expression: &Expression, env: &Env) -> EvaluatorResult {
     match expression {
         Expression::Lit(c) => eval_literal(c),
         Expression::Prefix(operator, expression) => {
-            let right = eval_expression(expression)?;
+            let right = eval_expression(expression, env)?;
             eval_prefix_expression(operator, &right)
         }
         Expression::Infix(left, operator, right) => {
-            let left = eval_expression(left)?;
-            let right = eval_expression(right)?;
+            let left = eval_expression(left, &Rc::clone(env))?;
+            let right = eval_expression(right, &Rc::clone(env))?;
             eval_infix_expression(&left, operator, &right)
         }
         Expression::If(condition, consequence, alternative) => {
-            let condition = eval_expression(condition)?;
+            let condition = eval_expression(condition, &Rc::clone(env))?;
 
             if is_truthy(&condition) {
-                eval_block_statement(consequence)
+                eval_block_statement(consequence, env)
             } else {
                 match alternative {
-                    Some(alternative) => eval_block_statement(alternative),
+                    Some(alternative) => eval_block_statement(alternative, env),
                     None => Ok(Rc::new(Object::Null)),
                 }
             }
         }
+        Expression::Ident(identifier) => eval_identifier(identifier, env),
         _ => unimplemented!(),
     }
 }
@@ -96,7 +103,7 @@ fn eval_prefix_expression(operator: &Token, right: &Rc<Object>) -> EvaluatorResu
     match operator {
         Token::BANG => eval_bang_operator(right),
         Token::MINUS => eval_minus_operator(right),
-        _ => unimplemented!(),
+        _ => Err(EvaluatorError::new(format!("Unknown operator: {}{}", operator, right))),
     }
 }
 
@@ -162,11 +169,11 @@ fn eval_boolean_infix_expression(left: bool, operator: &Token, right: bool) -> E
     Ok(Rc::new(result))
 }
 
-fn eval_block_statement(statements: &[Statement]) -> EvaluatorResult {
+fn eval_block_statement(statements: &[Statement], env: &Env) -> EvaluatorResult {
     let mut result = Rc::new(Object::Null);
 
     for statement in statements {
-        let val = eval_statement(statement)?;
+        let val = eval_statement(statement, &Rc::clone(env))?;
 
         match *val {
             Object::ReturnValue(_) => return Ok(val),
@@ -175,4 +182,13 @@ fn eval_block_statement(statements: &[Statement]) -> EvaluatorResult {
     }
 
     Ok(result)
+}
+
+fn eval_identifier(identifier: &str, env: &Env) -> EvaluatorResult {
+    let val = env.borrow().get(identifier);
+
+    match val {
+        Some(val) => Ok(val),
+        None => Err(EvaluatorError::new(format!("Identifier not found: {}", identifier))),
+    }
 }

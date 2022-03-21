@@ -1,11 +1,15 @@
+use std::{cell::RefCell, rc::Rc};
+
 use crate::parser::parser_test::parse;
 
-use super::eval;
+use super::{environment::Env, eval};
 
 fn test_runner(test_case: &[(&str, &str)]) {
+    let env: Env = Rc::new(RefCell::new(Default::default()));
+
     for (input, expected) in test_case {
         match parse(input) {
-            Ok(node) => match eval(node) {
+            Ok(node) => match eval(node, &Rc::clone(&env)) {
                 Ok(actual) => assert_eq!(expected, &format!("{}", actual)),
                 Err(err) => assert_eq!(expected, &format!("{}", err)),
             },
@@ -117,5 +121,16 @@ mod evaluator_test {
             ),
         ];
         test_runner(&tests);
+    }
+
+    #[test]
+    fn test_let_statements() {
+        let test_case = [
+            ("let a = 5; a;", "5"),
+            ("let a = 5 * 5; a;", "25"),
+            ("let a = 5; let b = a; b;", "5"),
+            ("let a = 5; let b = a; let c = a + b + 5; c;", "15"),
+        ];
+        test_runner(&test_case);
     }
 }
