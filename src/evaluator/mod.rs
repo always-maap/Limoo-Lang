@@ -23,6 +23,7 @@ fn is_truthy(obj: &Object) -> bool {
 }
 
 pub fn eval(node: Node, env: &Env) -> EvaluatorResult {
+    println!("{:?}", node);
     match node {
         Node::Program(program) => eval_program(&program, env),
         Node::Stmt(statement) => eval_statement(&statement, env),

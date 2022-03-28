@@ -1,21 +1,23 @@
-import { limoo_eval } from "../../pkg/limoo";
+import {
+    SandpackProvider,
+    SandpackLayout,
+    SandpackCodeEditor,
+} from "@codesandbox/sandpack-react";
+import "@codesandbox/sandpack-react/dist/index.css";
+import TerminalViewer from "../components/TerminalViewer";
 
 export default function Home() {
-    const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        const formData = new FormData(e.currentTarget);
-        e.preventDefault();
-        const code = formData.get("code");
-
-        if (code) {
-            const out = limoo_eval(code.toString());
-            console.log(out);
-        }
-    };
-
     return (
-        <form onSubmit={onSubmit}>
-            <input name="code" />
-            <button>run</button>
-        </form>
+        <SandpackProvider
+            customSetup={{
+                entry: "main.lp",
+                files: { "main.lp": { code: "let x = 5;" } },
+            }}
+        >
+            <SandpackLayout>
+                <SandpackCodeEditor id="editor" showTabs showLineNumbers />
+                <TerminalViewer />
+            </SandpackLayout>
+        </SandpackProvider>
     );
 }
