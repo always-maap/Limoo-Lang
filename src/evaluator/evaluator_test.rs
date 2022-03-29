@@ -90,7 +90,7 @@ mod evaluator_test {
 
     #[test]
     fn test_if_else_expressions() {
-        let test_case = [
+        let tests = [
             ("if (true) { 10 }", "10"),
             ("if (false) { 10 }", "null"),
             ("if (1) { 10 }", "10"),
@@ -99,7 +99,7 @@ mod evaluator_test {
             ("if (1 > 2) { 10 } else { 20 }", "20"),
             ("if (1 < 2) { 10 } else { 20 }", "10"),
         ];
-        test_runner(&test_case);
+        test_runner(&tests);
     }
 
     #[test]
@@ -125,12 +125,44 @@ mod evaluator_test {
 
     #[test]
     fn test_let_statements() {
-        let test_case = [
+        let tests = [
             ("let a = 5; a;", "5"),
             ("let a = 5 * 5; a;", "25"),
             ("let a = 5; let b = a; b;", "5"),
             ("let a = 5; let b = a; let c = a + b + 5; c;", "15"),
         ];
-        test_runner(&test_case);
+        test_runner(&tests);
+    }
+
+    #[test]
+    fn test_function_object() {
+        let tests = [("fn(x) { x + 2; };", "fn(x) {...}")];
+        test_runner(&tests);
+    }
+
+    #[test]
+    fn test_function_application() {
+        let tests = [
+            ("let identity = fn(x) { x; }; identity(5);", "5"),
+            ("let identity = fn(x) { return x; }; identity(5);", "5"),
+            ("let double = fn(x) { x * 2; }; double(5);", "10"),
+            ("let add = fn(x, y) { x + y; }; add(5, 5);", "10"),
+            ("let add = fn(x, y) { x + y; }; add(5 + 5, add(5, 5));", "20"),
+            ("fn(x) { x; }(5)", "5"),
+        ];
+        test_runner(&tests);
+    }
+
+    #[test]
+    fn test_closure() {
+        let tests = [(
+            "let newAdder = fn(x) { \
+             fn(y) { x + y }; \
+             }; \
+             let addTwo = newAdder(2); \
+             addTwo(2);",
+            "4",
+        )];
+        test_runner(&tests);
     }
 }

@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::{cell::RefCell, rc::Rc};
 
 use crate::{
     ast::{Expression, Literal, Node, Statement},
@@ -6,7 +6,10 @@ use crate::{
     token::Token,
 };
 
-use self::{environment::Env, error::EvaluatorError};
+use self::{
+    environment::{Env, Environment},
+    error::EvaluatorError,
+};
 
 pub mod environment;
 mod error;
@@ -88,8 +91,28 @@ fn eval_expression(expression: &Expression, env: &Env) -> EvaluatorResult {
             }
         }
         Expression::Ident(identifier) => eval_identifier(identifier, env),
+        Expression::Function(params, body) => {
+            let function = Rc::new(Object::Function(params.clone(), body.clone(), Rc::clone(env)));
+            Ok(function)
+        }
+        Expression::FunctionCall(function, args) => {
+            let func = eval_expression(function, &Rc::clone(env))?;
+            let args = eval_expressions(args, env)?;
+            apply_function(&func, &args)
+        }
         _ => unimplemented!(),
     }
+}
+
+fn eval_expressions(expressions: &[Expression], env: &Env) -> Result<Vec<Rc<Object>>, EvaluatorError> {
+    let mut list = Vec::new();
+
+    for expr in expressions {
+        let val = eval_expression(expr, &Rc::clone(env))?;
+        list.push(val);
+    }
+
+    Ok(list)
 }
 
 fn eval_literal(literal: &Literal) -> EvaluatorResult {
@@ -191,5 +214,37 @@ fn eval_identifier(identifier: &str, env: &Env) -> EvaluatorResult {
     match val {
         Some(val) => Ok(val),
         None => Err(EvaluatorError::new(format!("Identifier not found: {}", identifier))),
+    }
+}
+
+fn apply_function(function: &Rc<Object>, args: &[Rc<Object>]) -> EvaluatorResult {
+    match &**function {
+        Object::Function(params, body, env) => {
+            let mut extended_env = Environment::new_enclosed_environment(&Rc::clone(env));
+
+            if params.len() != args.len() {
+                return Err(EvaluatorError::new(format!(
+                    "Expected {} arguments but got {}",
+                    params.len(),
+                    args.len()
+                )));
+            }
+
+            params.iter().enumerate().for_each(|(i, param)| {
+                extended_env.set(param.clone(), args[i].clone());
+            });
+
+            let evaluted_body = eval_block_statement(&body, &Rc::new(RefCell::new(extended_env)))?;
+            unwrap_return_value(evaluted_body)
+        }
+        _ => Err(EvaluatorError::new(format!("Not a function: {}", function))),
+    }
+}
+
+fn unwrap_return_value(obj: Rc<Object>) -> EvaluatorResult {
+    if let Object::ReturnValue(val) = &*obj {
+        Ok(Rc::clone(&val))
+    } else {
+        Ok(obj)
     }
 }
