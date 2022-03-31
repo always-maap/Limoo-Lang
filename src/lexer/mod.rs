@@ -1,6 +1,5 @@
 use crate::token::Token;
 
-#[cfg(test)]
 mod lexer_test;
 
 #[derive(Debug, Default)]
