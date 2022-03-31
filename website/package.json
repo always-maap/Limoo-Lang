@@ -4,7 +4,6 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "yarn wasm-pack build",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
