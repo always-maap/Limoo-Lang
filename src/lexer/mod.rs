@@ -148,8 +148,6 @@ impl Lexer {
             self.read_char();
         }
 
-        self.read_char();
-
         string
     }
 }
