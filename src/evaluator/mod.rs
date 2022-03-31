@@ -7,10 +7,12 @@ use crate::{
 };
 
 use self::{
+    builtins::Builtin,
     environment::{Env, Environment},
     error::EvaluatorError,
 };
 
+pub mod builtins;
 pub mod environment;
 mod error;
 mod evaluator_test;
@@ -229,8 +231,11 @@ fn eval_identifier(identifier: &str, env: &Env) -> EvaluatorResult {
     let val = env.borrow().get(identifier);
 
     match val {
-        Some(val) => Ok(val),
-        None => Err(EvaluatorError::new(format!("Identifier not found: {}", identifier))),
+        Some(val) => Ok(val.clone()),
+        None => match Builtin::lookup(identifier) {
+            Some(object) => Ok(Rc::new(object)),
+            None => Err(EvaluatorError::new(format!("Identifier not found: {}", identifier))),
+        },
     }
 }
 
@@ -254,6 +259,7 @@ fn apply_function(function: &Rc<Object>, args: &[Rc<Object>]) -> EvaluatorResult
             let evaluted_body = eval_block_statement(&body, &Rc::new(RefCell::new(extended_env)))?;
             unwrap_return_value(evaluted_body)
         }
+        Object::Builtin(builtin) => builtin.apply(args),
         _ => Err(EvaluatorError::new(format!("Not a function: {}", function))),
     }
 }

@@ -177,4 +177,16 @@ mod evaluator_test {
         let test_case = [(r#""Hello" + " " + "there!""#, "Hello there!")];
         test_runner(&test_case);
     }
+
+    #[test]
+    fn test_builtin_functions() {
+        let test_case = [
+            (r#"len("")"#, "0"),
+            (r#"len("four")"#, "4"),
+            (r#"len("hello world")"#, "11"),
+            ("len(1)", "Argument to `len` not supported, got 1"),
+            (r#"len("one", "two")"#, "Invalid number of arguments: expected=1, got=2"),
+        ];
+        test_runner(&test_case);
+    }
 }

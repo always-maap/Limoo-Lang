@@ -275,6 +275,7 @@ impl Parser {
         self.next_token();
 
         if self.current_token_is(&Token::RPAREN) {
+            self.next_token();
             return Ok(arguments);
         }
 
@@ -287,6 +288,7 @@ impl Parser {
             arguments.push(self.parse_expression(Precedence::LOWEST)?);
         }
 
+        println!("no arguments");
         self.expect_peek(&Token::RPAREN)?;
 
         Ok(arguments)
