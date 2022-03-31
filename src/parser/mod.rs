@@ -114,6 +114,7 @@ impl Parser {
             Token::IDENT(ref id) => Ok(Expression::Ident(id.clone())),
             Token::INT(value) => Ok(Expression::Lit(Literal::Integer(value))),
             Token::BOOLEAN(boolean) => Ok(Expression::Lit(Literal::Boolean(boolean))),
+            Token::STRING(ref string) => Ok(Expression::Lit(Literal::String(string.clone()))),
             Token::BANG | Token::MINUS => self.parse_prefix_expression(),
             Token::LPAREN => self.parse_group_expression(),
             Token::IF => self.parse_if_expression(),

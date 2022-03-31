@@ -56,6 +56,10 @@ impl Lexer {
             '{' => token = Token::LBRACE,
             '}' => token = Token::RBRACE,
             '\0' => token = Token::EOF,
+            '"' => {
+                let string_literal = self.read_string();
+                token = Token::STRING(string_literal);
+            }
             ch => {
                 if ch.is_alphabetic() || ch == '_' {
                     let idenfifier = self.read_identifier();
@@ -132,5 +136,20 @@ impl Lexer {
         } else {
             self.input[self.read_position]
         }
+    }
+
+    fn read_string(&mut self) -> String {
+        let mut string = String::new();
+
+        self.read_char();
+
+        while self.ch != '"' {
+            string.push(self.ch);
+            self.read_char();
+        }
+
+        self.read_char();
+
+        string
     }
 }

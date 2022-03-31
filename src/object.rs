@@ -7,6 +7,7 @@ use crate::{ast::BlockStatement, evaluator::environment::Env};
 pub enum Object {
     Integer(i32),
     Boolean(bool),
+    String(String),
     Null,
     ReturnValue(Rc<Object>),
     Function(Vec<String>, BlockStatement, Env),
@@ -17,6 +18,7 @@ impl fmt::Display for Object {
         match self {
             Object::Integer(i) => write!(f, "{}", i),
             Object::Boolean(b) => write!(f, "{}", b),
+            Object::String(s) => write!(f, "{}", s),
             Object::Null => write!(f, "null"),
             Object::ReturnValue(obj) => write!(f, "{}", obj),
             Object::Function(params, _body, _env) => {

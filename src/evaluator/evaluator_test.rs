@@ -165,4 +165,10 @@ mod evaluator_test {
         )];
         test_runner(&tests);
     }
+
+    #[test]
+    fn test_string_expression() {
+        let test_case = [(r#""Hello there!""#, "Hello there!")];
+        test_runner(&test_case);
+    }
 }

@@ -86,6 +86,7 @@ impl fmt::Display for Expression {
 pub enum Literal {
     Integer(i32),
     Boolean(bool),
+    String(String),
 }
 
 impl fmt::Display for Literal {
@@ -93,6 +94,7 @@ impl fmt::Display for Literal {
         match self {
             Literal::Integer(i) => write!(f, "{}", i),
             Literal::Boolean(b) => write!(f, "{}", b),
+            Literal::String(s) => write!(f, r#""{}""#, s),
         }
     }
 }

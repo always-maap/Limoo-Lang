@@ -152,4 +152,10 @@ pub mod parser_test {
         let test_case = [("add(1, 2 * 3, 4 + 5);", "add(1, (2 * 3), (4 + 5))")];
         test_runner(&test_case);
     }
+
+    #[test]
+    fn test_string_literal_expression() {
+        let test_case = [(r#""hello there";"#, r#""hello there""#)];
+        test_runner(&test_case);
+    }
 }

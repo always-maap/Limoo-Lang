@@ -7,9 +7,10 @@ pub enum Token {
     EOF,
 
     // Identifiers + literals
-    IDENT(String), // add, foobar, x, y, ...
-    INT(i32),      // 1343456
-    BOOLEAN(bool), // true, false
+    IDENT(String),  // add, foobar, x, y, ...
+    INT(i32),       // 1343456
+    BOOLEAN(bool),  // true, false
+    STRING(String), // "foobar"
 
     // Operators
     ASSIGN,   // "="
@@ -46,6 +47,7 @@ impl fmt::Display for Token {
             Token::IDENT(id) => write!(f, "{}", id),
             Token::INT(i) => write!(f, "{}", i),
             Token::BOOLEAN(b) => write!(f, "{}", b),
+            Token::STRING(s) => write!(f, "{}", s),
             Token::ASSIGN => write!(f, "="),
             Token::PLUS => write!(f, "+"),
             Token::MINUS => write!(f, "-"),
