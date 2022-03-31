@@ -8,12 +8,14 @@ use super::error::EvaluatorError;
 #[derive(Debug, Clone, PartialEq)]
 pub enum Builtin {
     Len,
+    Print,
 }
 
 impl Builtin {
     pub fn lookup(name: &str) -> Option<Object> {
         match name {
             "len" => Some(Object::Builtin(Builtin::Len)),
+            "print" => Some(Object::Builtin(Builtin::Print)),
             _ => None,
         }
     }
@@ -31,6 +33,10 @@ impl Builtin {
                     ))),
                 }
             }
+            Builtin::Print => {
+                args.iter().for_each(|obj| println!("{}", obj));
+                Ok(Rc::new(Object::Null))
+            }
         }
     }
 }
@@ -39,6 +45,7 @@ impl fmt::Display for Builtin {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             Builtin::Len => write!(f, "len"),
+            Builtin::Print => write!(f, "print"),
         }
     }
 }

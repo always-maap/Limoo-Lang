@@ -288,7 +288,6 @@ impl Parser {
             arguments.push(self.parse_expression(Precedence::LOWEST)?);
         }
 
-        println!("no arguments");
         self.expect_peek(&Token::RPAREN)?;
 
         Ok(arguments)
