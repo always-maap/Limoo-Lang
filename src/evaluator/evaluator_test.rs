@@ -171,4 +171,10 @@ mod evaluator_test {
         let test_case = [(r#""Hello there!""#, "Hello there!")];
         test_runner(&test_case);
     }
+
+    #[test]
+    fn test_string_concatenation() {
+        let test_case = [(r#""Hello" + " " + "there!""#, "Hello there!")];
+        test_runner(&test_case);
+    }
 }

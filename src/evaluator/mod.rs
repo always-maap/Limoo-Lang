@@ -150,6 +150,7 @@ fn eval_infix_expression(left: &Rc<Object>, operator: &Token, right: &Rc<Object>
     match (&**left, &**right) {
         (Object::Integer(left), Object::Integer(right)) => eval_integer_infix_expression(*left, operator, *right),
         (Object::Boolean(left), Object::Boolean(right)) => eval_boolean_infix_expression(*left, operator, *right),
+        (Object::String(left), Object::String(right)) => eval_string_infix_expression(left, operator, right),
         _ => Err(EvaluatorError::new(format!(
             "Mismatch type: {} {} {}",
             left, operator, right
@@ -180,6 +181,22 @@ fn eval_integer_infix_expression(left: i32, operator: &Token, right: i32) -> Eva
 
 fn eval_boolean_infix_expression(left: bool, operator: &Token, right: bool) -> EvaluatorResult {
     let result = match operator {
+        Token::EQ => Object::Boolean(left == right),
+        Token::NOT_EQ => Object::Boolean(left != right),
+        _ => {
+            return Err(EvaluatorError::new(format!(
+                "Unknown operator: {} {} {}",
+                left, operator, right
+            )))
+        }
+    };
+
+    Ok(Rc::new(result))
+}
+
+fn eval_string_infix_expression(left: &str, operator: &Token, right: &str) -> EvaluatorResult {
+    let result = match operator {
+        Token::PLUS => Object::String(format!("{}{}", left, right)),
         Token::EQ => Object::Boolean(left == right),
         Token::NOT_EQ => Object::Boolean(left != right),
         _ => {
