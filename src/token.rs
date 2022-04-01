@@ -6,7 +6,7 @@ pub enum Token {
     ILLEGAL,
     EOF,
 
-    // Identifiers + literals
+    // Identifiers & literals
     IDENT(String),  // add, foobar, x, y, ...
     INT(i32),       // 1343456
     BOOLEAN(bool),  // true, false
@@ -27,11 +27,10 @@ pub enum Token {
     // Delimiters
     COMMA,     // ","
     SEMICOLON, // ";"
-
-    LPAREN, // "("
-    RPAREN, // ")"
-    LBRACE, // "{"
-    RBRACE, // "}"
+    LPAREN,    // "("
+    RPAREN,    // ")"
+    LBRACE,    // "{"
+    RBRACE,    // "}"
 
     // Keywords
     FUNCTION, // "FUNCTION"

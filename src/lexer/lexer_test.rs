@@ -1,54 +1,23 @@
+use crate::{lexer::Lexer, token::Token};
+
+fn test_runner(input: &str, expected: &Vec<Token>) {
+    let mut lexer = Lexer::new(&input);
+
+    for test in expected.iter() {
+        let token = lexer.next_token();
+        assert_eq!(&token, test);
+    }
+}
+
 #[cfg(test)]
 mod lexer_test {
-    use crate::{lexer::Lexer, token::Token};
+    use super::*;
 
     #[test]
-    fn test_next_token() {
-        let input = "=+(){},;";
-        let tests = vec![
-            Token::ASSIGN,
-            Token::PLUS,
-            Token::LPAREN,
-            Token::RPAREN,
-            Token::LBRACE,
-            Token::RBRACE,
-            Token::COMMA,
-            Token::SEMICOLON,
-            Token::EOF,
-        ];
-
-        let mut lexer = Lexer::new(input);
-
-        for test in tests.iter() {
-            let token = lexer.next_token();
-            assert_eq!(&token, test);
-        }
-    }
-
-    #[test]
-    fn test_next_token_2() {
-        let input = r#"let five = 5;
-                 let ten = 10;
-                 let add = fn(x, y) {
-                    x + y;
-                 };
-                 let result = add(five, ten);
-                 *!-/5;
-                 5 < 10 > 5;
-
-                 if (5 < 10) {
-                    return true;
-                 } else {
-                    return false;
-                 }
-
-                 10 == 10;
-                 10 != 9;
-                 "foobar"
-                 "foo bar"
-                 "#;
-
-        let mut lexer = Lexer::new(&input);
+    fn test_let_tokens() {
+        let test = "let five = 5;
+                let ten = 10;
+            ";
 
         let expected = vec![
             Token::LET,
@@ -61,6 +30,20 @@ mod lexer_test {
             Token::ASSIGN,
             Token::INT(10),
             Token::SEMICOLON,
+            Token::EOF,
+        ];
+
+        test_runner(test, &expected);
+    }
+
+    #[test]
+    fn test_function_token() {
+        let test = "let add = fn(x, y) {
+                    x + y;
+                 };
+                 let result = add(five, ten);";
+
+        let expected = vec![
             Token::LET,
             Token::IDENT("add".to_string()),
             Token::ASSIGN,
@@ -87,18 +70,22 @@ mod lexer_test {
             Token::IDENT("ten".to_string()),
             Token::RPAREN,
             Token::SEMICOLON,
-            Token::ASTERISK,
-            Token::BANG,
-            Token::MINUS,
-            Token::SLASH,
-            Token::INT(5),
-            Token::SEMICOLON,
-            Token::INT(5),
-            Token::LT,
-            Token::INT(10),
-            Token::GT,
-            Token::INT(5),
-            Token::SEMICOLON,
+            Token::EOF,
+        ];
+
+        test_runner(test, &expected);
+    }
+
+    #[test]
+    fn test_if_tokens() {
+        let test = "if (5 < 10) {
+                    return true;
+                 } else {
+                    return false;
+                 }
+                ";
+
+        let expected = vec![
             Token::IF,
             Token::LPAREN,
             Token::INT(5),
@@ -116,6 +103,46 @@ mod lexer_test {
             Token::BOOLEAN(false),
             Token::SEMICOLON,
             Token::RBRACE,
+            Token::EOF,
+        ];
+
+        test_runner(test, &expected);
+    }
+
+    #[test]
+    fn test_operator_tokens() {
+        let test = r#"
+                 *!-/5;
+                 5 < 10 > 5;
+                 "#;
+
+        let expected = vec![
+            Token::ASTERISK,
+            Token::BANG,
+            Token::MINUS,
+            Token::SLASH,
+            Token::INT(5),
+            Token::SEMICOLON,
+            Token::INT(5),
+            Token::LT,
+            Token::INT(10),
+            Token::GT,
+            Token::INT(5),
+            Token::SEMICOLON,
+            Token::EOF,
+        ];
+
+        test_runner(test, &expected);
+    }
+
+    #[test]
+    fn test_int_tokens() {
+        let test = r#"
+                10 == 10;
+                10 != 9;
+                "#;
+
+        let expected = vec![
             Token::INT(10),
             Token::EQ,
             Token::INT(10),
@@ -124,25 +151,34 @@ mod lexer_test {
             Token::NOT_EQ,
             Token::INT(9),
             Token::SEMICOLON,
+            Token::EOF,
+        ];
+
+        test_runner(test, &expected);
+    }
+
+    #[test]
+    fn test_string_tokens() {
+        let test = r#"
+                "foobar"
+                "foo bar"
+                "#;
+
+        let expected = vec![
             Token::STRING("foobar".to_string()),
             Token::STRING("foo bar".to_string()),
             Token::EOF,
         ];
 
-        for test in expected.iter() {
-            let token = lexer.next_token();
-            assert_eq!(&token, test);
-        }
+        test_runner(test, &expected);
     }
 
     #[test]
-    fn test_single_line_comment() {
-        let input = r#"
+    fn test_single_line_comment_tokens() {
+        let test = r#"
             // this is a comment
-            let five = 5;
+            let five = 5; // this is a inline comment
         "#;
-
-        let mut lexer = Lexer::new(&input);
 
         let expected = vec![
             Token::LET,
@@ -153,23 +189,18 @@ mod lexer_test {
             Token::EOF,
         ];
 
-        for test in expected.iter() {
-            let token = lexer.next_token();
-            assert_eq!(&token, test);
-        }
+        test_runner(test, &expected);
     }
 
     #[test]
-    fn test_multi_line_comment() {
-        let input = r#"
+    fn test_multi_line_comment_tokens() {
+        let test = r#"
             /* this is a 
              * multiline comment
              */
             let five = 5;
         "#;
 
-        let mut lexer = Lexer::new(&input);
-
         let expected = vec![
             Token::LET,
             Token::IDENT("five".to_string()),
@@ -179,9 +210,6 @@ mod lexer_test {
             Token::EOF,
         ];
 
-        for test in expected.iter() {
-            let token = lexer.next_token();
-            assert_eq!(&token, test);
-        }
+        test_runner(test, &expected);
     }
 }
