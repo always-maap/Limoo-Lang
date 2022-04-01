@@ -49,7 +49,17 @@ impl Lexer {
             ',' => token = Token::COMMA,
             '+' => token = Token::PLUS,
             '-' => token = Token::MINUS,
-            '/' => token = Token::SLASH,
+            '/' => {
+                if self.peek_char() == '/' {
+                    self.skip_single_line_comment();
+                    return self.next_token();
+                } else if self.peek_char() == '*' {
+                    self.skip_multi_line_comment();
+                    return self.next_token();
+                } else {
+                    token = Token::SLASH
+                }
+            }
             '*' => token = Token::ASTERISK,
             '<' => token = Token::LT,
             '>' => token = Token::GT,
@@ -128,6 +138,31 @@ impl Lexer {
         while self.ch.is_whitespace() {
             self.read_char();
         }
+    }
+
+    fn skip_single_line_comment(&mut self) {
+        while self.ch != '\n' && self.ch != '\0' {
+            self.read_char();
+        }
+
+        self.skip_whitespace()
+    }
+
+    fn skip_multi_line_comment(&mut self) {
+        let mut is_comment_closed = false;
+
+        while !is_comment_closed {
+            if self.ch == '\0' {
+                is_comment_closed = true;
+            }
+            if self.ch == '*' && self.peek_char() == '/' {
+                is_comment_closed = true;
+                self.read_char();
+            }
+            self.read_char();
+        }
+
+        self.skip_whitespace()
     }
 
     fn peek_char(&self) -> char {

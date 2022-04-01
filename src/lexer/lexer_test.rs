@@ -33,7 +33,7 @@ mod lexer_test {
                     x + y;
                  };
                  let result = add(five, ten);
-                 !-/*5;
+                 *!-/5;
                  5 < 10 > 5;
 
                  if (5 < 10) {
@@ -87,10 +87,10 @@ mod lexer_test {
             Token::IDENT("ten".to_string()),
             Token::RPAREN,
             Token::SEMICOLON,
+            Token::ASTERISK,
             Token::BANG,
             Token::MINUS,
             Token::SLASH,
-            Token::ASTERISK,
             Token::INT(5),
             Token::SEMICOLON,
             Token::INT(5),
@@ -126,6 +126,56 @@ mod lexer_test {
             Token::SEMICOLON,
             Token::STRING("foobar".to_string()),
             Token::STRING("foo bar".to_string()),
+            Token::EOF,
+        ];
+
+        for test in expected.iter() {
+            let token = lexer.next_token();
+            assert_eq!(&token, test);
+        }
+    }
+
+    #[test]
+    fn test_single_line_comment() {
+        let input = r#"
+            // this is a comment
+            let five = 5;
+        "#;
+
+        let mut lexer = Lexer::new(&input);
+
+        let expected = vec![
+            Token::LET,
+            Token::IDENT("five".to_string()),
+            Token::ASSIGN,
+            Token::INT(5),
+            Token::SEMICOLON,
+            Token::EOF,
+        ];
+
+        for test in expected.iter() {
+            let token = lexer.next_token();
+            assert_eq!(&token, test);
+        }
+    }
+
+    #[test]
+    fn test_multi_line_comment() {
+        let input = r#"
+            /* this is a 
+             * multiline comment
+             */
+            let five = 5;
+        "#;
+
+        let mut lexer = Lexer::new(&input);
+
+        let expected = vec![
+            Token::LET,
+            Token::IDENT("five".to_string()),
+            Token::ASSIGN,
+            Token::INT(5),
+            Token::SEMICOLON,
             Token::EOF,
         ];
 
