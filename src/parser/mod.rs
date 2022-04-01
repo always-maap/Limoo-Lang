@@ -136,6 +136,8 @@ impl Parser {
                 | Token::PLUS
                 | Token::MINUS
                 | Token::ASTERISK
+                | Token::AND
+                | Token::OR
                 | Token::SLASH => {
                     self.next_token();
                     let expression = left_expression.unwrap();

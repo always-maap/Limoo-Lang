@@ -113,6 +113,7 @@ mod lexer_test {
     fn test_operator_tokens() {
         let test = r#"
                  *!-/5;
+                 && ||
                  5 < 10 > 5;
                  "#;
 
@@ -123,6 +124,8 @@ mod lexer_test {
             Token::SLASH,
             Token::INT(5),
             Token::SEMICOLON,
+            Token::AND,
+            Token::OR,
             Token::INT(5),
             Token::LT,
             Token::INT(10),

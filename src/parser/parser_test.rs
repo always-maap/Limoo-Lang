@@ -90,6 +90,8 @@ pub mod parser_test {
             ("5 < 5;", "(5 < 5)"),
             ("5 == 5;", "(5 == 5)"),
             ("5 != 5;", "(5 != 5)"),
+            ("true && false", "(true && false)"),
+            ("false || true", "(false || true)"),
         ];
 
         test_runner(&tests);

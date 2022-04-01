@@ -23,6 +23,8 @@ pub enum Token {
     GT,       // ">"
     EQ,       // "=="
     NOT_EQ,   // "!="
+    AND,      // "&&"
+    OR,       // "||"
 
     // Delimiters
     COMMA,     // ","
@@ -57,6 +59,8 @@ impl fmt::Display for Token {
             Token::GT => write!(f, ">"),
             Token::EQ => write!(f, "=="),
             Token::NOT_EQ => write!(f, "!="),
+            Token::AND => write!(f, "&&"),
+            Token::OR => write!(f, "||"),
             Token::COMMA => write!(f, ","),
             Token::SEMICOLON => write!(f, ";"),
             Token::LPAREN => write!(f, "("),

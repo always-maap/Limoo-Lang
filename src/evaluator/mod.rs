@@ -23,12 +23,13 @@ fn is_truthy(obj: &Object) -> bool {
     match *obj {
         Object::Null => false,
         Object::Boolean(false) => false,
+        Object::String(ref s) if s.is_empty() => false,
+        Object::Integer(0) => false,
         _ => true,
     }
 }
 
 pub fn eval(node: Node, env: &Env) -> EvaluatorResult {
-    println!("{:?}", node);
     match node {
         Node::Program(program) => eval_program(&program, env),
         Node::Stmt(statement) => eval_statement(&statement, env),
@@ -149,6 +150,10 @@ fn eval_minus_operator(expression: &Rc<Object>) -> EvaluatorResult {
 }
 
 fn eval_infix_expression(left: &Rc<Object>, operator: &Token, right: &Rc<Object>) -> EvaluatorResult {
+    if *operator == Token::AND || *operator == Token::OR {
+        return eval_logical_infix_expression(left, operator, right);
+    }
+
     match (&**left, &**right) {
         (Object::Integer(left), Object::Integer(right)) => eval_integer_infix_expression(*left, operator, *right),
         (Object::Boolean(left), Object::Boolean(right)) => eval_boolean_infix_expression(*left, operator, *right),
@@ -158,6 +163,23 @@ fn eval_infix_expression(left: &Rc<Object>, operator: &Token, right: &Rc<Object>
             left, operator, right
         ))),
     }
+}
+
+fn eval_logical_infix_expression(left: &Rc<Object>, operator: &Token, right: &Rc<Object>) -> EvaluatorResult {
+    let (left_coercion, right_ceorcion) = (is_truthy(left), is_truthy(right));
+
+    let result = match operator {
+        Token::AND => left_coercion && right_ceorcion,
+        Token::OR => left_coercion || right_ceorcion,
+        _ => {
+            return Err(EvaluatorError::new(format!(
+                "Unknown operator: {} {} {}",
+                left, operator, right
+            )))
+        }
+    };
+
+    Ok(Rc::new(Object::Boolean(result)))
 }
 
 fn eval_integer_infix_expression(left: i32, operator: &Token, right: i32) -> EvaluatorResult {

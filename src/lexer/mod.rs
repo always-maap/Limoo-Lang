@@ -63,6 +63,22 @@ impl Lexer {
             '*' => token = Token::ASTERISK,
             '<' => token = Token::LT,
             '>' => token = Token::GT,
+            '&' => {
+                if self.peek_char() == '&' {
+                    self.read_char();
+                    token = Token::AND
+                } else {
+                    token = Token::ILLEGAL
+                }
+            }
+            '|' => {
+                if self.peek_char() == '|' {
+                    self.read_char();
+                    token = Token::OR
+                } else {
+                    token = Token::ILLEGAL
+                }
+            }
             '{' => token = Token::LBRACE,
             '}' => token = Token::RBRACE,
             '\0' => token = Token::EOF,

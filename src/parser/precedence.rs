@@ -4,6 +4,7 @@ use crate::token::Token;
 pub enum Precedence {
     LOWEST,
     EQUALS,      // '==' or '!='
+    LOGICAL,     // '&&' or '||'
     LESSGREATER, // '>' or '<'
     SUM,         // '+' or '-'
     PRODUCT,     // '*' or '/'
@@ -17,6 +18,7 @@ pub fn token_to_precedence(token: &Token) -> Precedence {
         Token::EQ | Token::NOT_EQ => Precedence::EQUALS,
         Token::PLUS | Token::MINUS => Precedence::SUM,
         Token::SLASH | Token::ASTERISK => Precedence::PRODUCT,
+        Token::AND | Token::OR => Precedence::LOGICAL,
         Token::LPAREN => Precedence::CALL,
         _ => Precedence::LOWEST,
     }

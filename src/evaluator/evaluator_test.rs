@@ -72,6 +72,16 @@ mod evaluator_test {
             ("(1 < 2) == false", "false"),
             ("(1 > 2) == true", "false"),
             ("(1 > 2) == false", "true"),
+            ("true && true", "true"),
+            ("true && false", "false"),
+            ("false && false", "false"),
+            ("true || true", "true"),
+            ("false || true", "true"),
+            ("false || false", "false"),
+            ("true && 0", "false"),
+            ("true && 1", "true"),
+            ("true || 0", "true"),
+            ("true || 1", "true"),
         ];
         test_runner(&tests);
     }
