@@ -1,17 +1,15 @@
-use crate::{lexer::Lexer, token::Token};
-
-fn test_runner(input: &str, expected: &Vec<Token>) {
-    let mut lexer = Lexer::new(&input);
-
-    for test in expected.iter() {
-        let token = lexer.next_token();
-        assert_eq!(&token, test);
-    }
-}
-
 #[cfg(test)]
 mod lexer_test {
-    use super::*;
+    use crate::{lexer::Lexer, token::Token};
+
+    fn test_runner(input: &str, expected: &Vec<Token>) {
+        let mut lexer = Lexer::new(&input);
+
+        for test in expected.iter() {
+            let token = lexer.next_token();
+            assert_eq!(&token, test);
+        }
+    }
 
     #[test]
     fn test_let_tokens() {

@@ -103,7 +103,6 @@ fn eval_expression(expression: &Expression, env: &Env) -> EvaluatorResult {
             let args = eval_expressions(args, env)?;
             apply_function(&func, &args)
         }
-        _ => unimplemented!(),
     }
 }
 

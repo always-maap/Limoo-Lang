@@ -10,23 +10,22 @@ pub fn parse(input: &str) -> Result<Node, ParserErrors> {
     Ok(Node::Program(program))
 }
 
-fn test_runner(test_case: &[(&str, &str)]) {
-    for (input, expected) in test_case {
-        match parse(input) {
-            Ok(node) => assert_eq!(expected, &format!("{}", node)),
-            Err(e) => {
-                println!(
-                    "for input: {} the expected was: {}, which didn't passed!",
-                    input, expected
-                );
-                panic!("Parsing Error: {:#?}", e)
+#[cfg(test)]
+pub mod parser_test {
+    fn test_runner(test_case: &[(&str, &str)]) {
+        for (input, expected) in test_case {
+            match parse(input) {
+                Ok(node) => assert_eq!(expected, &format!("{}", node)),
+                Err(e) => {
+                    println!(
+                        "for input: {} the expected was: {}, which didn't passed!",
+                        input, expected
+                    );
+                    panic!("Parsing Error: {:#?}", e)
+                }
             }
         }
     }
-}
-
-#[cfg(test)]
-pub mod parser_test {
     use super::*;
 
     #[test]

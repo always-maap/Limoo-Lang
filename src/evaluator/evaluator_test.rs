@@ -1,32 +1,31 @@
-use std::{cell::RefCell, rc::Rc};
+#[cfg(test)]
+mod evaluator_test {
+    use std::{cell::RefCell, rc::Rc};
 
-use crate::parser::parser_test::parse;
+    use crate::{
+        evaluator::{environment::Env, eval},
+        parser::parser_test::parse,
+    };
 
-use super::{environment::Env, eval};
+    fn test_runner(test_case: &[(&str, &str)]) {
+        let env: Env = Rc::new(RefCell::new(Default::default()));
 
-fn test_runner(test_case: &[(&str, &str)]) {
-    let env: Env = Rc::new(RefCell::new(Default::default()));
-
-    for (input, expected) in test_case {
-        match parse(input) {
-            Ok(node) => match eval(node, &Rc::clone(&env)) {
-                Ok(actual) => assert_eq!(expected, &format!("{}", actual)),
-                Err(err) => assert_eq!(expected, &format!("{}", err)),
-            },
-            Err(err) => {
-                println!(
-                    "for input: {} the expected was: {}, which didn't passed!",
-                    input, expected
-                );
-                panic!("Parsing Error: {:#?}", err)
+        for (input, expected) in test_case {
+            match parse(input) {
+                Ok(node) => match eval(node, &Rc::clone(&env)) {
+                    Ok(actual) => assert_eq!(expected, &format!("{}", actual)),
+                    Err(err) => assert_eq!(expected, &format!("{}", err)),
+                },
+                Err(err) => {
+                    println!(
+                        "for input: {} the expected was: {}, which didn't passed!",
+                        input, expected
+                    );
+                    panic!("Parsing Error: {:#?}", err)
+                }
             }
         }
     }
-}
-
-#[cfg(test)]
-mod evaluator_test {
-    use super::*;
 
     #[test]
     fn test_integer_expression() {
