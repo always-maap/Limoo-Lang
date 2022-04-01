@@ -38,6 +38,7 @@ pub enum Token {
     FUNCTION, // "FUNCTION"
     LET,      // "LET"
     IF,       // "IF"
+    WHILE,    // "WHILE"
     ELSE,     // "ELSE"
     RETURN,   // "RETURN"
 }
@@ -70,6 +71,7 @@ impl fmt::Display for Token {
             Token::FUNCTION => write!(f, "fn"),
             Token::LET => write!(f, "let"),
             Token::IF => write!(f, "if"),
+            Token::WHILE => write!(f, "while"),
             Token::ELSE => write!(f, "else"),
             Token::RETURN => write!(f, "return"),
             token => write!(f, "{:?}", token),

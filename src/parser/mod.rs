@@ -118,6 +118,7 @@ impl Parser {
             Token::BANG | Token::MINUS => self.parse_prefix_expression(),
             Token::LPAREN => self.parse_group_expression(),
             Token::IF => self.parse_if_expression(),
+            Token::WHILE => self.parse_while_expression(),
             Token::FUNCTION => self.parse_fn_expressions(),
             _ => {
                 return Err(ParserError::new(format!(
@@ -217,6 +218,20 @@ impl Parser {
         };
 
         Ok(Expression::If(Box::new(condition), consequence, alternative))
+    }
+
+    fn parse_while_expression(&mut self) -> Result<Expression, ParserError> {
+        self.expect_peek(&Token::LPAREN)?;
+        self.next_token();
+
+        let condition = self.parse_expression(Precedence::LOWEST)?;
+
+        self.expect_peek(&Token::RPAREN)?;
+        self.expect_peek(&Token::LBRACE)?;
+
+        let body = self.parse_block_statement()?;
+
+        Ok(Expression::While(Box::new(condition), body))
     }
 
     fn parse_block_statement(&mut self) -> Result<BlockStatement, ParserError> {

@@ -95,6 +95,7 @@ impl Lexer {
                         "true" => Token::BOOLEAN(true),
                         "false" => Token::BOOLEAN(false),
                         "if" => Token::IF,
+                        "while" => Token::WHILE,
                         "else" => Token::ELSE,
                         "return" => Token::RETURN,
                         _ => Token::IDENT(idenfifier),

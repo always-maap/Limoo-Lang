@@ -112,6 +112,12 @@ mod evaluator_test {
     }
 
     #[test]
+    fn test_while_expressions() {
+        let tests = [("let i = 0; while (i < 10) { i = i + 1;} i;", "10")];
+        test_runner(&tests);
+    }
+
+    #[test]
     fn test_return_statements() {
         let tests = [
             ("return 10;", "10"),

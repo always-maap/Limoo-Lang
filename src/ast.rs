@@ -45,6 +45,7 @@ pub enum Expression {
     Prefix(Token, Box<Expression>),
     Infix(Box<Expression>, Token, Box<Expression>),
     If(Box<Expression>, BlockStatement, Option<BlockStatement>),
+    While(Box<Expression>, BlockStatement),
     Function(Vec<String>, BlockStatement),
     FunctionCall(Box<Expression>, Vec<Expression>),
     Assign(String, Token, Box<Expression>),
@@ -60,7 +61,6 @@ impl fmt::Display for Expression {
                 write!(f, "({} {} {})", left_expression, operator, right_expression)
             }
             Expression::If(condition, then_block, else_block) => {
-                println!("{:?} {:?} {:?}", condition, then_block, else_block);
                 if let Some(else_block) = else_block {
                     write!(
                         f,
@@ -72,6 +72,9 @@ impl fmt::Display for Expression {
                 } else {
                     write!(f, "if {} {{ {} }}", condition, format_statements(then_block))
                 }
+            }
+            Expression::While(condition, block) => {
+                write!(f, "while {} {{ {} }}", condition, format_statements(block))
             }
             Expression::Function(params, _block) => {
                 write!(f, "fn({}) {{...}}", params.join(", "),)

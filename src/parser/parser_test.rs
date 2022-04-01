@@ -140,6 +140,12 @@ pub mod parser_test {
     }
 
     #[test]
+    fn test_while_expression() {
+        let test_case = [("while (x < y) { x }", "while (x < y) { x }")];
+        test_runner(&test_case);
+    }
+
+    #[test]
     fn test_function_expression() {
         let test_case = [
             ("fn() {};", "fn() {...}"),

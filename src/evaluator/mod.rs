@@ -93,6 +93,16 @@ fn eval_expression(expression: &Expression, env: &Env) -> EvaluatorResult {
                 }
             }
         }
+        Expression::While(condition, body) => {
+            let mut con = eval_expression(condition, &Rc::clone(env))?;
+            while is_truthy(&con) {
+                eval_block_statement(body, env)?;
+
+                con = eval_expression(condition, &Rc::clone(env))?;
+            }
+
+            Ok(Rc::new(Object::Null))
+        }
         Expression::Ident(identifier) => eval_identifier(identifier, env),
         Expression::Function(params, body) => {
             let function = Rc::new(Object::Function(params.clone(), body.clone(), Rc::clone(env)));
