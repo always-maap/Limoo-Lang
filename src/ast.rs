@@ -47,6 +47,7 @@ pub enum Expression {
     If(Box<Expression>, BlockStatement, Option<BlockStatement>),
     Function(Vec<String>, BlockStatement),
     FunctionCall(Box<Expression>, Vec<Expression>),
+    Assign(String, Token, Box<Expression>),
 }
 
 impl fmt::Display for Expression {
@@ -77,6 +78,9 @@ impl fmt::Display for Expression {
             }
             Expression::FunctionCall(function_expression, args) => {
                 write!(f, "{}({})", function_expression, format_expressions(args))
+            }
+            Expression::Assign(left_expression, operator, right_expression) => {
+                write!(f, "{} {} {}", left_expression, operator, right_expression)
             }
         }
     }

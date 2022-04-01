@@ -34,6 +34,7 @@ pub mod parser_test {
             ("let x = 5;", "let x = 5;"),
             ("let y = true;", "let y = true;"),
             ("let foobar = y;", "let foobar = y;"),
+            ("let x = 5; x = x + 5; x;", "let x = 5;x = (x + 5)x"),
         ];
 
         test_runner(&tests);

@@ -148,6 +148,17 @@ impl Parser {
                     let expression = left_expression.unwrap();
                     left_expression = self.parse_call_expression(expression)
                 }
+                Token::ASSIGN => {
+                    let iden = match &self.current_token {
+                        Token::IDENT(ref id) => id.clone(),
+                        token => {
+                            return Err(self.error_no_identifier(token));
+                        }
+                    };
+                    self.next_token();
+
+                    left_expression = self.parse_assignment_expression(iden)
+                }
                 _ => return left_expression,
             }
         }
@@ -269,6 +280,14 @@ impl Parser {
         let arguments = self.parse_call_arguments()?;
 
         Ok(Expression::FunctionCall(Box::new(function), arguments))
+    }
+
+    fn parse_assignment_expression(&mut self, left: String) -> Result<Expression, ParserError> {
+        self.next_token();
+
+        let right = self.parse_expression(Precedence::LOWEST)?;
+
+        Ok(Expression::Assign(left, Token::ASSIGN, Box::new(right)))
     }
 
     fn parse_call_arguments(&mut self) -> Result<Vec<Expression>, ParserError> {

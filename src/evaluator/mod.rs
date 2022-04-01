@@ -103,6 +103,11 @@ fn eval_expression(expression: &Expression, env: &Env) -> EvaluatorResult {
             let args = eval_expressions(args, env)?;
             apply_function(&func, &args)
         }
+        Expression::Assign(identifier, _, expression) => {
+            let value = eval_expression(expression, env)?;
+            env.borrow_mut().set(identifier.clone(), value.clone());
+            Ok(value)
+        }
     }
 }
 

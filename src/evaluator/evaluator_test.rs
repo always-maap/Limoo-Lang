@@ -120,11 +120,11 @@ mod evaluator_test {
             ("9; return 2 * 5; 9;", "10"),
             ("if (10 > 1) { return 10; }", "10"),
             (
-                "if (10 > 1) { \
-                  if (10 > 1) { \
-                   return 10; \
-                  } \
-                  return 1; \
+                "if (10 > 1) {
+                  if (10 > 1) {
+                   return 10;
+                  }
+                  return 1;
                 }",
                 "10",
             ),
@@ -139,6 +139,7 @@ mod evaluator_test {
             ("let a = 5 * 5; a;", "25"),
             ("let a = 5; let b = a; b;", "5"),
             ("let a = 5; let b = a; let c = a + b + 5; c;", "15"),
+            ("let a = 5; a = a + 2; a;", "7"),
         ];
         test_runner(&tests);
     }
@@ -165,10 +166,10 @@ mod evaluator_test {
     #[test]
     fn test_closure() {
         let tests = [(
-            "let newAdder = fn(x) { \
-             fn(y) { x + y }; \
-             }; \
-             let addTwo = newAdder(2); \
+            "let newAdder = fn(x) {
+             fn(y) { x + y };
+             };
+             let addTwo = newAdder(2);
              addTwo(2);",
             "4",
         )];
