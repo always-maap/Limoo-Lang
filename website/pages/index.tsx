@@ -1,7 +1,8 @@
-import { SandpackProvider, SandpackLayout, SandpackCodeEditor } from '@codesandbox/sandpack-react';
+import { SandpackProvider, SandpackLayout } from '@codesandbox/sandpack-react';
 import '@codesandbox/sandpack-react/dist/index.css';
 import Container from '../components/Container';
 import TerminalViewer from '../components/TerminalViewer';
+import MonacoEditor from '../components/MonacoEditor';
 
 const exampleCode = `let sum = fn(a, b) {
   return a + b;
@@ -22,8 +23,8 @@ export default function Home() {
           },
         }}
       >
-        <SandpackLayout>
-          <SandpackCodeEditor id="editor" showTabs showLineNumbers />
+        <SandpackLayout theme="dark">
+          <MonacoEditor />
           <TerminalViewer />
         </SandpackLayout>
       </SandpackProvider>

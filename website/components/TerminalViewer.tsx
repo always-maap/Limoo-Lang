@@ -1,4 +1,4 @@
-import { useSandpack } from '@codesandbox/sandpack-react';
+import { useActiveCode } from '@codesandbox/sandpack-react';
 import dynamic from 'next/dynamic';
 
 const TerminalViewer = dynamic({
@@ -7,12 +7,9 @@ const TerminalViewer = dynamic({
 
     // eslint-disable-next-line react/display-name
     return () => {
-      const { sandpack } = useSandpack();
-      const { files, activePath } = sandpack;
+      const { code } = useActiveCode();
 
-      const code = files[activePath].code;
-
-      return <pre style={{ width: '50%' }}>{limoo.limoo_eval(code)}</pre>;
+      return <pre style={{ width: '50%', color: 'white' }}>{limoo.limoo_eval(code)}</pre>;
     };
   },
 });
