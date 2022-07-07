@@ -1,17 +1,17 @@
-import { FC } from "react";
+import { FC } from 'react';
 
 type Props = {
-    className?: string;
+  className?: string;
 };
 
 const Container: FC<Props> = (props) => {
-    const { children, className, ...rest } = props;
+  const { children, className, ...rest } = props;
 
-    return (
-        <div className={`container mx-auto px-4 ${className}`} {...rest}>
-            {children}
-        </div>
-    );
+  return (
+    <div className={`max-w-7xl mx-auto px-4 sm:px-6 md:px-8 ${className}`} {...rest}>
+      {children}
+    </div>
+  );
 };
 
 export default Container;

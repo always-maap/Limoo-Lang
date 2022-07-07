@@ -9,7 +9,7 @@ const TerminalViewer = dynamic({
     return () => {
       const { code } = useActiveCode();
 
-      return <pre style={{ width: '50%', color: 'white' }}>{limoo.limoo_eval(code)}</pre>;
+      return <pre style={{ width: '50%' }}>{limoo.limoo_eval(code)}</pre>;
     };
   },
 });

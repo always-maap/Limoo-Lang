@@ -23,7 +23,7 @@ export default function Home() {
           },
         }}
       >
-        <SandpackLayout theme="dark">
+        <SandpackLayout theme="light">
           <MonacoEditor />
           <TerminalViewer />
         </SandpackLayout>

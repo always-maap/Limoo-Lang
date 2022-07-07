@@ -11,21 +11,18 @@ function MonacoEditor() {
   return (
     <SandpackStack customStyle={{ height: '500px', margin: 0, position: 'relative' }}>
       <FileTabs />
-      <div style={{ flex: 1, paddingTop: 8, background: '#1e1e1e' }}>
+      <div style={{ flex: 1, paddingTop: 8 }}>
         <Editor
           width="100%"
           height="500px"
-          theme="vs-dark"
+          theme="light"
           key={sandpack.activePath}
           defaultValue={code}
           onChange={(value) => {
             setVal(value);
           }}
         />
-        <button
-          style={{ position: 'absolute', bottom: 0, left: 0, color: 'white' }}
-          onClick={() => updateCode(val)}
-        >
+        <button style={{ position: 'absolute', bottom: 0, left: 0 }} onClick={() => updateCode(val)}>
           run
         </button>
       </div>
