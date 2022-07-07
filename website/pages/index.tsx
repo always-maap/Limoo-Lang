@@ -62,7 +62,7 @@ fibonacci(10)`,
 export async function getStaticProps() {
   const shiki = await import('shiki');
   const highlighter = await shiki.getHighlighter({
-    theme: 'light-plus',
+    theme: 'min-light',
   });
 
   const examples = rawExamples.map(({ name, code }) => {

@@ -10,7 +10,7 @@ const TerminalViewer = dynamic({
     return (props: Props) => {
       const { code } = props;
 
-      return <pre style={{ width: '50%' }}>{limoo.limoo_eval(code)}</pre>;
+      return <pre className="w-1/2 p-1 border-l-2">{limoo.limoo_eval(code)}</pre>;
     };
   },
 });

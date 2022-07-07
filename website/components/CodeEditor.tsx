@@ -21,12 +21,12 @@ export default function CodeEditor(props: Props) {
     <div className="w-full relative">
       <Editor extensions={[rust()]} value={code} onChange={onChange} height="500px" spellCheck={false} />
       <Button
-        className="absolute right-0 bottom-0"
+        className="absolute bottom-2 right-2"
         onClick={() => {
           onRunClick(editorValue.current);
         }}
       >
-        RUN <PlayIcon />
+        <PlayIcon width={24} height={24} />
       </Button>
     </div>
   );
