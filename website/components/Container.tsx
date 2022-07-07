@@ -1,10 +1,11 @@
-import { FC } from 'react';
+import { ReactNode } from 'react';
 
 type Props = {
   className?: string;
+  children?: ReactNode;
 };
 
-const Container: FC<Props> = (props) => {
+export default function Container(props: Props) {
   const { children, className, ...rest } = props;
 
   return (
@@ -12,6 +13,4 @@ const Container: FC<Props> = (props) => {
       {children}
     </div>
   );
-};
-
-export default Container;
+}
