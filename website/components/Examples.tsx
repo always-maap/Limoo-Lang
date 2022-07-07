@@ -16,7 +16,7 @@ export default function Examples(props: Props) {
           <div dangerouslySetInnerHTML={{ __html: example.code }} />
 
           <Button
-            className="absolute right-0 bottom-0 mt-2 mr-2"
+            className="absolute right-0 bottom-0"
             onClick={() => {
               onChangeExample(index);
             }}

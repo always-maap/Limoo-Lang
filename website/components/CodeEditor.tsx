@@ -11,7 +11,7 @@ type Props = {
 
 export default function CodeEditor(props: Props) {
   const { code, onRunClick } = props;
-  const editorValue = useRef('');
+  const editorValue = useRef(code);
 
   const onChange = useCallback((value) => {
     editorValue.current = value;
