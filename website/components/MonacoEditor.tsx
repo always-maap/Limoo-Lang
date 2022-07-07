@@ -2,6 +2,8 @@ import Editor from '@monaco-editor/react';
 import { useActiveCode, SandpackStack, FileTabs, useSandpack } from '@codesandbox/sandpack-react';
 import '@codesandbox/sandpack-react/dist/index.css';
 import { useState } from 'react';
+import { Button } from './Button';
+import { PlayIcon } from '@radix-ui/react-icons';
 
 function MonacoEditor() {
   const { code, updateCode } = useActiveCode();
@@ -22,9 +24,9 @@ function MonacoEditor() {
             setVal(value);
           }}
         />
-        <button style={{ position: 'absolute', bottom: 0, left: 0 }} onClick={() => updateCode(val)}>
-          run
-        </button>
+        <Button onClick={() => updateCode(val)}>
+          RUN <PlayIcon />
+        </Button>
       </div>
     </SandpackStack>
   );
