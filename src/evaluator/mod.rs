@@ -118,7 +118,11 @@ fn eval_expression(expression: &Expression, env: &Env) -> EvaluatorResult {
             env.borrow_mut().set(identifier.clone(), value.clone());
             Ok(value)
         }
-        _ => unimplemented!(),
+        Expression::Index(left, index) => {
+            let left = eval_expression(left, &Rc::clone(env))?;
+            let index = eval_expression(index, &Rc::clone(env))?;
+            eval_index_expression(&left, &index)
+        }
     }
 }
 
@@ -251,6 +255,25 @@ fn eval_string_infix_expression(left: &str, operator: &Token, right: &str) -> Ev
     };
 
     Ok(Rc::new(result))
+}
+
+fn eval_index_expression(left: &Rc<Object>, index: &Rc<Object>) -> EvaluatorResult {
+    match (&**left, &**index) {
+        (Object::Array(arr), Object::Integer(idx)) => {
+            if *idx < 0 {
+                Ok(Rc::new(Object::Null))
+            } else {
+                match arr.get(*idx as usize) {
+                    Some(val) => Ok(Rc::clone(val)),
+                    None => Ok(Rc::new(Object::Null)),
+                }
+            }
+        }
+        _ => Err(EvaluatorError::new(format!(
+            "Index operator not supported: {} {}",
+            left, index
+        ))),
+    }
 }
 
 fn eval_block_statement(statements: &[Statement], env: &Env) -> EvaluatorResult {
