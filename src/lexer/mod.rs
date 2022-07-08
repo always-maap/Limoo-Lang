@@ -46,6 +46,8 @@ impl Lexer {
             ';' => token = Token::SEMICOLON,
             '(' => token = Token::LPAREN,
             ')' => token = Token::RPAREN,
+            '[' => token = Token::LBRACKET,
+            ']' => token = Token::RBRACKET,
             ',' => token = Token::COMMA,
             '+' => token = Token::PLUS,
             '-' => token = Token::MINUS,

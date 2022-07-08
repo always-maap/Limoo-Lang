@@ -213,4 +213,21 @@ mod lexer_test {
 
         test_runner(test, &expected);
     }
+
+    #[test]
+    fn test_ident_tokens() {
+        let test = "[1, 2, 3]";
+        let expected = vec![
+            Token::LBRACKET,
+            Token::INT(1),
+            Token::COMMA,
+            Token::INT(2),
+            Token::COMMA,
+            Token::INT(3),
+            Token::RBRACKET,
+            Token::EOF,
+        ];
+
+        test_runner(test, &expected);
+    }
 }
