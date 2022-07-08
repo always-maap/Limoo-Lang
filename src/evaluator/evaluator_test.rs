@@ -205,4 +205,14 @@ mod evaluator_test {
         ];
         test_runner(&test_case);
     }
+
+    #[test]
+    fn test_array_literals() {
+        let test_case = [
+            (r#"[]"#, "[]"),
+            (r#"[1, 2 * 2, 3 + 3]"#, "[1, 4, 6]"),
+            (r#"[1 + 1, 2 * 2, 3 + 3]"#, "[2, 4, 6]"),
+        ];
+        test_runner(&test_case);
+    }
 }

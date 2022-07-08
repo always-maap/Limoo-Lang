@@ -11,6 +11,7 @@ pub enum Object {
     Integer(i32),
     Boolean(bool),
     String(String),
+    Array(Vec<Rc<Object>>),
     Null,
     ReturnValue(Rc<Object>),
     Function(Vec<String>, BlockStatement, Env),
@@ -23,6 +24,14 @@ impl fmt::Display for Object {
             Object::Integer(i) => write!(f, "{}", i),
             Object::Boolean(b) => write!(f, "{}", b),
             Object::String(s) => write!(f, "{}", s),
+            Object::Array(arr) => write!(
+                f,
+                "[{}]",
+                arr.iter()
+                    .map(|obj| obj.to_string())
+                    .collect::<Vec<String>>()
+                    .join(", ")
+            ),
             Object::Null => write!(f, "null"),
             Object::ReturnValue(obj) => write!(f, "{}", obj),
             Object::Function(params, _body, _env) => {

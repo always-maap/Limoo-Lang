@@ -71,7 +71,7 @@ fn eval_statement(statement: &Statement, env: &Env) -> EvaluatorResult {
 
 fn eval_expression(expression: &Expression, env: &Env) -> EvaluatorResult {
     match expression {
-        Expression::Lit(c) => eval_literal(c),
+        Expression::Lit(c) => eval_literal(c, env),
         Expression::Prefix(operator, expression) => {
             let right = eval_expression(expression, env)?;
             eval_prefix_expression(operator, &right)
@@ -133,12 +133,15 @@ fn eval_expressions(expressions: &[Expression], env: &Env) -> Result<Vec<Rc<Obje
     Ok(list)
 }
 
-fn eval_literal(literal: &Literal) -> EvaluatorResult {
+fn eval_literal(literal: &Literal, env: &Env) -> EvaluatorResult {
     match literal {
         Literal::Integer(i) => Ok(Rc::new(Object::Integer(*i))),
         Literal::Boolean(b) => Ok(Rc::new(Object::Boolean(*b))),
         Literal::String(s) => Ok(Rc::new(Object::String(s.clone()))),
-        _ => unimplemented!(),
+        Literal::Array(arr) => {
+            let list = eval_expressions(&arr, &Rc::clone(env))?;
+            Ok(Rc::new(Object::Array(list)))
+        }
     }
 }
 
