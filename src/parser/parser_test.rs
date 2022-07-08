@@ -166,4 +166,13 @@ pub mod parser_test {
         let test_case = [(r#""hello there";"#, r#""hello there""#)];
         test_runner(&test_case);
     }
+
+    #[test]
+    fn test_array_literal_expression() {
+        let test_case = [
+            ("[1, 2 * 2, 3 + 3];", "[1, (2 * 2), (3 + 3)]"),
+            ("[1 + 1, 2 * 2, 3 + 3];", "[(1 + 1), (2 * 2), (3 + 3)]"),
+        ];
+        test_runner(&test_case);
+    }
 }

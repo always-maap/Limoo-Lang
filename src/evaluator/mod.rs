@@ -118,6 +118,7 @@ fn eval_expression(expression: &Expression, env: &Env) -> EvaluatorResult {
             env.borrow_mut().set(identifier.clone(), value.clone());
             Ok(value)
         }
+        _ => unimplemented!(),
     }
 }
 
@@ -137,6 +138,7 @@ fn eval_literal(literal: &Literal) -> EvaluatorResult {
         Literal::Integer(i) => Ok(Rc::new(Object::Integer(*i))),
         Literal::Boolean(b) => Ok(Rc::new(Object::Boolean(*b))),
         Literal::String(s) => Ok(Rc::new(Object::String(s.clone()))),
+        _ => unimplemented!(),
     }
 }
 

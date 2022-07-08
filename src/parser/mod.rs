@@ -120,6 +120,7 @@ impl Parser {
             Token::IF => self.parse_if_expression(),
             Token::WHILE => self.parse_while_expression(),
             Token::FUNCTION => self.parse_fn_expressions(),
+            Token::LBRACKET => self.parse_array_literal(),
             _ => {
                 return Err(ParserError::new(format!(
                     "no prefix parse function for {:?}",
@@ -292,9 +293,15 @@ impl Parser {
     }
 
     fn parse_call_expression(&mut self, function: Expression) -> Result<Expression, ParserError> {
-        let arguments = self.parse_call_arguments()?;
+        let arguments = self.parse_expression_list(&Token::RPAREN)?;
 
         Ok(Expression::FunctionCall(Box::new(function), arguments))
+    }
+
+    fn parse_array_literal(&mut self) -> Result<Expression, ParserError> {
+        let arr = self.parse_expression_list(&Token::RBRACKET)?;
+
+        Ok(Expression::Lit(Literal::Array(arr)))
     }
 
     fn parse_assignment_expression(&mut self, left: String) -> Result<Expression, ParserError> {
@@ -327,6 +334,30 @@ impl Parser {
         self.expect_peek(&Token::RPAREN)?;
 
         Ok(arguments)
+    }
+
+    fn parse_expression_list(&mut self, end: &Token) -> Result<Vec<Expression>, ParserError> {
+        let mut list = Vec::new();
+
+        if self.peek_token_is(end) {
+            self.next_token();
+            return Ok(list);
+        }
+
+        self.next_token();
+
+        list.push(self.parse_expression(Precedence::LOWEST)?);
+
+        while self.peek_token_is(&Token::COMMA) {
+            self.next_token();
+            self.next_token();
+
+            list.push(self.parse_expression(Precedence::LOWEST)?);
+        }
+
+        self.expect_peek(end)?;
+
+        Ok(list)
     }
 
     fn error_no_identifier(&self, token: &Token) -> ParserError {
