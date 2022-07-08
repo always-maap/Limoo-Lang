@@ -150,6 +150,11 @@ impl Parser {
                     let expression = left_expression.unwrap();
                     left_expression = self.parse_call_expression(expression)
                 }
+                Token::LBRACKET => {
+                    self.next_token();
+                    let expression = left_expression.unwrap();
+                    left_expression = self.parse_index_expression(expression)
+                }
                 Token::ASSIGN => {
                     let iden = match &self.current_token {
                         Token::IDENT(ref id) => id.clone(),
@@ -312,30 +317,6 @@ impl Parser {
         Ok(Expression::Assign(left, Token::ASSIGN, Box::new(right)))
     }
 
-    fn parse_call_arguments(&mut self) -> Result<Vec<Expression>, ParserError> {
-        let mut arguments = Vec::new();
-
-        self.next_token();
-
-        if self.current_token_is(&Token::RPAREN) {
-            self.next_token();
-            return Ok(arguments);
-        }
-
-        arguments.push(self.parse_expression(Precedence::LOWEST)?);
-
-        while self.peek_token_is(&Token::COMMA) {
-            self.next_token();
-            self.next_token();
-
-            arguments.push(self.parse_expression(Precedence::LOWEST)?);
-        }
-
-        self.expect_peek(&Token::RPAREN)?;
-
-        Ok(arguments)
-    }
-
     fn parse_expression_list(&mut self, end: &Token) -> Result<Vec<Expression>, ParserError> {
         let mut list = Vec::new();
 
@@ -358,6 +339,16 @@ impl Parser {
         self.expect_peek(end)?;
 
         Ok(list)
+    }
+
+    fn parse_index_expression(&mut self, left: Expression) -> Result<Expression, ParserError> {
+        self.next_token();
+
+        let index = self.parse_expression(Precedence::LOWEST)?;
+
+        self.expect_peek(&Token::RBRACKET)?;
+
+        Ok(Expression::Index(Box::new(left), Box::new(index)))
     }
 
     fn error_no_identifier(&self, token: &Token) -> ParserError {

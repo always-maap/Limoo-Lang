@@ -11,6 +11,7 @@ pub enum Precedence {
     PRODUCT,     // '*' or '/'
     PREFIX,      // '-x' or '!x'
     CALL,        // 'myFunc(x)'
+    INDEX,       // 'myArray[0]'
 }
 
 pub fn token_to_precedence(token: &Token) -> Precedence {
@@ -22,6 +23,7 @@ pub fn token_to_precedence(token: &Token) -> Precedence {
         Token::SLASH | Token::ASTERISK => Precedence::PRODUCT,
         Token::AND | Token::OR => Precedence::LOGICAL,
         Token::LPAREN => Precedence::CALL,
+        Token::LBRACKET => Precedence::INDEX,
         _ => Precedence::LOWEST,
     }
 }

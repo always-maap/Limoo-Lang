@@ -49,6 +49,7 @@ pub enum Expression {
     Function(Vec<String>, BlockStatement),
     FunctionCall(Box<Expression>, Vec<Expression>),
     Assign(String, Token, Box<Expression>),
+    Index(Box<Expression>, Box<Expression>),
 }
 
 impl fmt::Display for Expression {
@@ -84,6 +85,9 @@ impl fmt::Display for Expression {
             }
             Expression::Assign(left_expression, operator, right_expression) => {
                 write!(f, "{} {} {}", left_expression, operator, right_expression)
+            }
+            Expression::Index(left_expression, right_expression) => {
+                write!(f, "({}[{}])", left_expression, right_expression)
             }
         }
     }
