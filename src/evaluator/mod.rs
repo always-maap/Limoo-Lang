@@ -96,9 +96,12 @@ fn eval_expression(expression: &Expression, env: &Env) -> EvaluatorResult {
         Expression::While(condition, body) => {
             let mut con = eval_expression(condition, &Rc::clone(env))?;
             while is_truthy(&con) {
-                eval_block_statement(body, env)?;
+                let evaluted_body = eval_block_statement(&body, env)?;
 
-                con = eval_expression(condition, &Rc::clone(env))?;
+                match *evaluted_body {
+                    Object::ReturnValue(_) => return Ok(evaluted_body),
+                    _ => con = eval_expression(condition, &Rc::clone(env))?,
+                }
             }
 
             Ok(Rc::new(Object::Null))

@@ -118,6 +118,24 @@ mod evaluator_test {
     }
 
     #[test]
+    fn test_return_early_in_loop() {
+        let tests = [(
+            r#"
+            let i = 0;
+            while(i != 5) {
+              if(i == 2) {
+                return i;
+              }
+              i = i + 1;
+            }
+            i;
+            "#,
+            "2",
+        )];
+        test_runner(&tests);
+    }
+
+    #[test]
     fn test_return_statements() {
         let tests = [
             ("return 10;", "10"),
