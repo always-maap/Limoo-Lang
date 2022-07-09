@@ -29,6 +29,7 @@ impl Builtin {
 
                 match &*args[0] {
                     Object::String(string) => Ok(Rc::new(Object::Integer(string.len() as i32))),
+                    Object::Array(array) => Ok(Rc::new(Object::Integer(array.len() as i32))),
                     object => Err(EvaluatorError::new(format!(
                         "Argument to `len` not supported, got {}",
                         object
