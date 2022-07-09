@@ -9,6 +9,7 @@ use super::error::EvaluatorError;
 pub enum Builtin {
     Len,
     Print,
+    Push,
 }
 
 impl Builtin {
@@ -16,6 +17,7 @@ impl Builtin {
         match name {
             "len" => Some(Object::Builtin(Builtin::Len)),
             "print" => Some(Object::Builtin(Builtin::Print)),
+            "push" => Some(Object::Builtin(Builtin::Push)),
             _ => None,
         }
     }
@@ -37,6 +39,24 @@ impl Builtin {
                 args.iter().for_each(|obj| println!("{}", obj));
                 Ok(Rc::new(Object::Null))
             }
+            Builtin::Push => {
+                check_argument_count(2, args.len())?;
+
+                let array = args.first().unwrap();
+                let object = Rc::clone(args.last().unwrap());
+
+                match &**array {
+                    Object::Array(arr) => {
+                        let mut new_arr = arr.clone();
+                        new_arr.push(object);
+                        Ok(Rc::new(Object::Array(new_arr)))
+                    }
+                    object => Err(EvaluatorError::new(format!(
+                        "Argument to `push` not supported, got {}",
+                        object
+                    ))),
+                }
+            }
         }
     }
 }
@@ -46,6 +66,7 @@ impl fmt::Display for Builtin {
         match self {
             Builtin::Len => write!(f, "len"),
             Builtin::Print => write!(f, "print"),
+            Builtin::Push => write!(f, "push"),
         }
     }
 }

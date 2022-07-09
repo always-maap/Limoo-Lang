@@ -202,6 +202,7 @@ mod evaluator_test {
             (r#"len("hello world")"#, "11"),
             ("len(1)", "Argument to `len` not supported, got 1"),
             (r#"len("one", "two")"#, "Invalid number of arguments: expected=1, got=2"),
+            ("push([], 1)", "[1]"),
         ];
         test_runner(&test_case);
     }
