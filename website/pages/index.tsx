@@ -11,7 +11,7 @@ type Props = {
 
 export default function Home(props: Props) {
   const { examples } = props;
-  const [example, setExample] = useState(rawExamples[0].code);
+  const [example, setExample] = useState(rawExamples[1].code);
 
   function onChangeExample(index: number) {
     setExample(rawExamples[index].code);
@@ -38,12 +38,8 @@ export default function Home(props: Props) {
 
 const rawExamples = [
   {
-    name: 'sum',
-    code: `let sum = fn(a, b) {
-  return a + b;
-}
-
-sum(5, 2)`,
+    name: 'hello_world',
+    code: `print("Hello, world!")`,
   },
   {
     name: 'fibonacci',
@@ -56,6 +52,20 @@ sum(5, 2)`,
 }
 
 fibonacci(10)`,
+  },
+  {
+    name: 'linear_search',
+    code: `let linear_search = fn(arr, target) {
+  let i = 0;
+  while(i < len(arr)) {
+    if(arr[i] == target) {
+      return i;
+    }
+    i = i + 1;
+  }
+}
+ 
+linear_search([1, 2, 3], 2);`,
   },
 ];
 
