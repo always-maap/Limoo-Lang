@@ -4,6 +4,7 @@ import CodeEditor from '../components/CodeEditor';
 import Nav from '../components/Nav';
 import { useState } from 'react';
 import Examples from '../components/Examples';
+import Head from 'next/head';
 
 type Props = {
   examples: typeof rawExamples;
@@ -23,16 +24,21 @@ export default function Home(props: Props) {
   }
 
   return (
-    <Container>
-      <Nav />
+    <>
+      <Head>
+        <title>Limoo-Lang</title>
+      </Head>
+      <Container>
+        <Nav />
 
-      <div className="flex justify-between border-2 rounded">
-        <CodeEditor code={example} onRunClick={onRunClick} />
-        <TerminalViewer code={example} />
-      </div>
+        <div className="flex justify-between border-2 rounded">
+          <CodeEditor code={example} onRunClick={onRunClick} />
+          <TerminalViewer code={example} />
+        </div>
 
-      <Examples examples={examples} onChangeExample={onChangeExample} />
-    </Container>
+        <Examples examples={examples} onChangeExample={onChangeExample} />
+      </Container>
+    </>
   );
 }
 
